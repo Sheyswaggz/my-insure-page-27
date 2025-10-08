@@ -19,11 +19,13 @@ const logger = {
   /**
    * Log informational message
    * @param {string} message - Log message
-   * @param {Object} context - Additional context data
+   * @param {Object} _context - Additional context data (unused, for future use)
    */
-  info: (message, context = {}) => {
-    // Info logging disabled in production for performance
-    // Uncomment for development debugging:
+  info: (message, _context = {}) => {
+    /*
+     * Info logging disabled in production to reduce console noise.
+     * Enable by uncommenting the line below during development.
+     */
     // console.info('[Main]', message, { timestamp: new Date().toISOString(), ...context });
   },
 
@@ -70,7 +72,6 @@ function initializeHeader() {
   } catch (error) {
     logger.error('Failed to initialize header component', error);
 
-    // Track initialization failure for monitoring
     if (typeof window !== 'undefined' && window.dataLayer) {
       window.dataLayer.push({
         event: 'component_init_error',
@@ -93,7 +94,6 @@ function init() {
 
   const cleanupFunctions = [];
 
-  // Initialize header component
   const headerCleanup = initializeHeader();
   if (headerCleanup) {
     cleanupFunctions.push(headerCleanup);
@@ -103,7 +103,6 @@ function init() {
     componentsInitialized: cleanupFunctions.length,
   });
 
-  // Store cleanup functions for potential future use
   if (typeof window !== 'undefined') {
     window.__appCleanup = () => {
       logger.info('Running application cleanup');
@@ -125,6 +124,5 @@ function init() {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
-  // DOM is already ready, initialize immediately
   init();
 }
