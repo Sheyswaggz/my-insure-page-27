@@ -1,47 +1,45 @@
 /**
- * Vitest Test Setup
- * 
- * Global test configuration and setup that runs before all tests.
- * This file is referenced in vitest.config.js setupFiles.
- * 
- * Purpose:
- * - Configure jsdom environment
- * - Set up global test utilities
- * - Mock browser APIs if needed
- * - Initialize test helpers
+ * Test Setup File
+ * Configures the test environment for Vitest with jsdom
  */
 
-// Configure jsdom environment
-if (typeof window !== 'undefined') {
-  // Set up any global browser API mocks or configurations here
-  
-  // Example: Mock IntersectionObserver if needed
-  if (!window.IntersectionObserver) {
-    window.IntersectionObserver = class IntersectionObserver {
-      constructor() {}
-      disconnect() {}
-      observe() {}
-      takeRecords() {
-        return [];
-      }
-      unobserve() {}
-    };
-  }
-  
-  // Example: Mock matchMedia if needed
-  if (!window.matchMedia) {
-    window.matchMedia = (query) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: () => {},
-      removeListener: () => {},
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      dispatchEvent: () => true,
-    });
-  }
-}
+// Global test utilities and mocks can be added here
 
-// Global test utilities can be added here
-// Example: Custom matchers, test helpers, etc.
+// Mock window.matchMedia for responsive tests
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: (query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {}, // deprecated
+    removeListener: () => {}, // deprecated
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => {},
+  }),
+});
+
+// Mock IntersectionObserver
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  takeRecords() {
+    return [];
+  }
+  unobserve() {}
+};
+
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+};
+
+/*
+ * Additional global mocks can be added here as needed
+ * for testing browser APIs that jsdom doesn't fully support
+ */
