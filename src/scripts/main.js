@@ -1,9 +1,9 @@
 /**
  * Main JavaScript Entry Point
- * 
+ *
  * Initializes all components and utilities for the landing page.
  * Handles DOMContentLoaded event and component initialization with error handling.
- * 
+ *
  * @module main
  * @generated-from task-id:e59bcfd2-c7fd-4e21-a4e7-991d3345a5a2 sprint:current
  * @modifies main application initialization
@@ -22,10 +22,9 @@ const logger = {
    * @param {Object} context - Additional context data
    */
   info: (message, context = {}) => {
-    console.info('[Main]', message, {
-      timestamp: new Date().toISOString(),
-      ...context,
-    });
+    // Info logging disabled in production for performance
+    // Uncomment for development debugging:
+    // console.info('[Main]', message, { timestamp: new Date().toISOString(), ...context });
   },
 
   /**
@@ -70,7 +69,7 @@ function initializeHeader() {
     return cleanup;
   } catch (error) {
     logger.error('Failed to initialize header component', error);
-    
+
     // Track initialization failure for monitoring
     if (typeof window !== 'undefined' && window.dataLayer) {
       window.dataLayer.push({
@@ -79,7 +78,7 @@ function initializeHeader() {
         error: error.message,
       });
     }
-    
+
     return null;
   }
 }
