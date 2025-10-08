@@ -190,7 +190,7 @@ const App = {
     Performance.start('modules-init');
 
     // Sequential initialization is intentional to maintain dependency order
-    // eslint-disable-next-line no-await-in-loop
+    // eslint-disable-next-line no-await-in-loop -- Sequential module initialization required
     for (const module of this.modules) {
       try {
         const moduleName = module.name || 'anonymous';
