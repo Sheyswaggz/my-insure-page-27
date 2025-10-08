@@ -189,8 +189,8 @@ const App = {
   async initializeModules() {
     Performance.start('modules-init');
 
+    /* eslint-disable no-await-in-loop */
     // Sequential initialization is intentional to maintain dependency order
-    // eslint-disable-next-line no-await-in-loop -- Sequential module initialization required
     for (const module of this.modules) {
       try {
         const moduleName = module.name || 'anonymous';
@@ -206,6 +206,7 @@ const App = {
         });
       }
     }
+    /* eslint-enable no-await-in-loop */
 
     Performance.end('modules-init');
   },
