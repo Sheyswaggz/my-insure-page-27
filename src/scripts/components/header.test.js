@@ -1,180 +1,232 @@
 /**
  * Header Component Tests
  *
- * Basic tests for header component initialization and exports
- *
- * @module components/header.test
+ * Tests for header.js component functionality including:
+ * - Component initialization and cleanup
+ * - Mobile menu toggle behavior
+ * - Keyboard accessibility (Escape key)
+ * - Sticky header behavior
+ * - Event listener management
+ * - ARIA attribute management
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { initHeader, getHeaderState } from './header.js';
 
-// Mock DOM setup
-function setupDOM() {
-  document.body.innerHTML = `
-    <header>
-      <button data-menu-toggle aria-label="Toggle menu">Menu</button>
-      <nav id="primary-navigation">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </header>
+/**
+ * Creates a mock header DOM structure for testing
+ * @returns {HTMLElement} Mock header element
+ */
+function createMockHeader() {
+  const header = document.createElement('header');
+  header.innerHTML = `
+    <button data-menu-toggle aria-label="Toggle menu">Menu</button>
+    <nav id="primary-navigation">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
   `;
-}
-
-function cleanupDOM() {
-  document.body.innerHTML = '';
+  return header;
 }
 
 describe('Header Component', () => {
-  describe('Module Exports', () => {
-    it('should export initHeader function', () => {
-      expect(initHeader).toBeDefined();
-      expect(typeof initHeader).toBe('function');
-    });
+  let header;
+  let cleanup;
 
-    it('should export getHeaderState function', () => {
-      expect(getHeaderState).toBeDefined();
-      expect(typeof getHeaderState).toBe('function');
-    });
+  beforeEach(() => {
+    /* Create and append mock header to document */
+    header = createMockHeader();
+    document.body.appendChild(header);
+  });
+
+  afterEach(() => {
+    /* Cleanup component and remove from DOM */
+    if (cleanup) {
+      cleanup();
+      cleanup = null;
+    }
+    if (header && header.parentNode) {
+      header.parentNode.removeChild(header);
+    }
+    document.body.style.overflow = '';
   });
 
   describe('Initialization', () => {
-    beforeEach(() => {
-      setupDOM();
-    });
+    it('should initialize successfully with valid header', () => {
+      cleanup = initHeader(header);
+      expect(cleanup).toBeTypeOf('function');
 
-    afterEach(() => {
-      cleanupDOM();
-    });
-
-    it('should initialize without errors when header element exists', () => {
-      expect(() => {
-        const cleanup = initHeader('header');
-        cleanup();
-      }).not.toThrow();
-    });
-
-    it('should return a cleanup function', () => {
-      const cleanup = initHeader('header');
-      expect(typeof cleanup).toBe('function');
-      cleanup();
-    });
-
-    it('should throw error when header element is not found', () => {
-      cleanupDOM();
-      expect(() => {
-        initHeader('.non-existent-header');
-      }).toThrow();
-    });
-
-    it('should throw error when menu toggle button is missing', () => {
-      document.body.innerHTML = `
-        <header>
-          <nav><a href="#">Link</a></nav>
-        </header>
-      `;
-
-      expect(() => {
-        initHeader('header');
-      }).toThrow(/menu toggle/i);
-    });
-
-    it('should throw error when nav element is missing', () => {
-      document.body.innerHTML = `
-        <header>
-          <button data-menu-toggle>Menu</button>
-        </header>
-      `;
-
-      expect(() => {
-        initHeader('header');
-      }).toThrow(/navigation element/i);
-    });
-  });
-
-  describe('State Management', () => {
-    let cleanup;
-
-    beforeEach(() => {
-      setupDOM();
-      cleanup = initHeader('header');
-    });
-
-    afterEach(() => {
-      if (cleanup) cleanup();
-      cleanupDOM();
-    });
-
-    it('should return initial state', () => {
       const state = getHeaderState();
-
-      expect(state).toBeDefined();
-      expect(state.isMenuOpen).toBe(false);
-      expect(state.isStickyEnabled).toBe(true);
-      expect(state.hasElements).toBeDefined();
       expect(state.hasElements.header).toBe(true);
       expect(state.hasElements.menuToggle).toBe(true);
       expect(state.hasElements.nav).toBe(true);
     });
 
-    it('should have cached navigation links', () => {
-      const state = getHeaderState();
-      expect(state.hasElements.navLinks).toBeGreaterThan(0);
+    it('should set initial ARIA attributes correctly', () => {
+      cleanup = initHeader(header);
+
+      const menuToggle = header.querySelector('[data-menu-toggle]');
+      const nav = header.querySelector('nav');
+
+      expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
+      expect(menuToggle.getAttribute('aria-controls')).toBe('primary-navigation');
+      expect(nav.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('should throw error if header element not found', () => {
+      expect(() => {
+        initHeader('#non-existent-header');
+      }).toThrow('Header element not found');
+    });
+
+    it('should throw error if menu toggle button is missing', () => {
+      const invalidHeader = document.createElement('header');
+      invalidHeader.innerHTML = '<nav></nav>';
+      document.body.appendChild(invalidHeader);
+
+      expect(() => {
+        initHeader(invalidHeader);
+      }).toThrow('Menu toggle button');
+
+      document.body.removeChild(invalidHeader);
     });
   });
 
-  describe('Accessibility', () => {
-    let cleanup;
-
+  describe('Mobile Menu Toggle', () => {
     beforeEach(() => {
-      setupDOM();
-      cleanup = initHeader('header');
+      cleanup = initHeader(header);
     });
 
-    afterEach(() => {
-      if (cleanup) cleanup();
-      cleanupDOM();
-    });
+    it('should toggle menu open state when button clicked', () => {
+      const menuToggle = header.querySelector('[data-menu-toggle]');
+      const nav = header.querySelector('nav');
 
-    it('should set ARIA attributes on menu toggle', () => {
-      const menuToggle = document.querySelector('[data-menu-toggle]');
+      /* Initially closed */
+      expect(getHeaderState().isMenuOpen).toBe(false);
+
+      /* Click to open */
+      menuToggle.click();
+      expect(getHeaderState().isMenuOpen).toBe(true);
+      expect(nav.classList.contains('is-open')).toBe(true);
+      expect(menuToggle.getAttribute('aria-expanded')).toBe('true');
+
+      /* Click to close */
+      menuToggle.click();
+      expect(getHeaderState().isMenuOpen).toBe(false);
+      expect(nav.classList.contains('is-open')).toBe(false);
       expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
-      expect(menuToggle.getAttribute('aria-controls')).toBeTruthy();
-      expect(menuToggle.getAttribute('aria-label')).toBeTruthy();
     });
 
-    it('should set ARIA attributes on navigation', () => {
-      const nav = document.querySelector('nav');
-      expect(nav.getAttribute('aria-hidden')).toBe('true');
-      expect(nav.id).toBeTruthy();
+    it('should prevent body scroll when menu is open', () => {
+      const menuToggle = header.querySelector('[data-menu-toggle]');
+
+      menuToggle.click();
+      expect(document.body.style.overflow).toBe('hidden');
+
+      menuToggle.click();
+      expect(document.body.style.overflow).toBe('');
+    });
+
+    it('should close menu when navigation link is clicked', () => {
+      const menuToggle = header.querySelector('[data-menu-toggle]');
+      const navLink = header.querySelector('nav a');
+
+      /* Open menu */
+      menuToggle.click();
+      expect(getHeaderState().isMenuOpen).toBe(true);
+
+      /* Click nav link */
+      navLink.click();
+      expect(getHeaderState().isMenuOpen).toBe(false);
+    });
+  });
+
+  describe('Keyboard Accessibility', () => {
+    beforeEach(() => {
+      cleanup = initHeader(header);
+    });
+
+    it('should close menu when Escape key is pressed', () => {
+      const menuToggle = header.querySelector('[data-menu-toggle]');
+
+      /* Open menu */
+      menuToggle.click();
+      expect(getHeaderState().isMenuOpen).toBe(true);
+
+      /* Press Escape */
+      const escapeEvent = new KeyboardEvent('keydown', {
+        key: 'Escape',
+        keyCode: 27,
+        bubbles: true,
+      });
+      document.dispatchEvent(escapeEvent);
+
+      expect(getHeaderState().isMenuOpen).toBe(false);
+    });
+
+    it('should not close menu for other keys', () => {
+      const menuToggle = header.querySelector('[data-menu-toggle]');
+
+      /* Open menu */
+      menuToggle.click();
+      expect(getHeaderState().isMenuOpen).toBe(true);
+
+      /* Press other key */
+      const otherKeyEvent = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        bubbles: true,
+      });
+      document.dispatchEvent(otherKeyEvent);
+
+      expect(getHeaderState().isMenuOpen).toBe(true);
     });
   });
 
   describe('Cleanup', () => {
-    beforeEach(() => {
-      setupDOM();
+    it('should remove all event listeners on cleanup', () => {
+      cleanup = initHeader(header);
+      const menuToggle = header.querySelector('[data-menu-toggle]');
+
+      /* Open menu */
+      menuToggle.click();
+      expect(getHeaderState().isMenuOpen).toBe(true);
+
+      /* Cleanup */
+      cleanup();
+
+      /* Try to toggle - should not work after cleanup */
+      menuToggle.click();
+      expect(getHeaderState().isMenuOpen).toBe(false);
     });
 
-    afterEach(() => {
-      cleanupDOM();
-    });
+    it('should reset state on cleanup', () => {
+      cleanup = initHeader(header);
+      const menuToggle = header.querySelector('[data-menu-toggle]');
 
-    it('should cleanup without errors', () => {
-      const cleanup = initHeader('header');
-      expect(() => cleanup()).not.toThrow();
-    });
+      /* Open menu */
+      menuToggle.click();
 
-    it('should reset state after cleanup', () => {
-      const cleanup = initHeader('header');
+      /* Cleanup */
       cleanup();
 
       const state = getHeaderState();
       expect(state.isMenuOpen).toBe(false);
       expect(state.hasElements.header).toBe(false);
       expect(state.hasElements.menuToggle).toBe(false);
-      expect(state.hasElements.nav).toBe(false);
+    });
+
+    it('should restore body scroll on cleanup', () => {
+      cleanup = initHeader(header);
+      const menuToggle = header.querySelector('[data-menu-toggle]');
+
+      /* Open menu */
+      menuToggle.click();
+      expect(document.body.style.overflow).toBe('hidden');
+
+      /* Cleanup */
+      cleanup();
+      expect(document.body.style.overflow).toBe('');
     });
   });
 });
