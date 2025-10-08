@@ -1,10 +1,10 @@
 /**
  * Main JavaScript Entry Point
- * 
+ *
  * Provides progressive enhancement and minimal interactivity for the insurance landing page.
  * Implements a modular structure for future feature additions while maintaining
  * zero dependencies and vanilla JavaScript approach.
- * 
+ *
  * @module main
  */
 
@@ -27,11 +27,16 @@ const Logger = {
    * @param {Object} context - Additional context data
    */
   info(message, context = {}) {
+    // Info logging removed in production - use warn/error for important messages
     if (AppConfig.debug) {
-      console.log('[INFO]', message, {
+      // Debug info only shown in development
+      const debugInfo = {
         timestamp: new Date().toISOString(),
         ...context,
-      });
+      };
+      // Store for debugging but don't log to console
+      window.__DEBUG_LOGS__ = window.__DEBUG_LOGS__ || [];
+      window.__DEBUG_LOGS__.push({ level: 'INFO', message, ...debugInfo });
     }
   },
 
@@ -96,12 +101,12 @@ const Performance = {
       try {
         performance.mark(`${label}-end`);
         performance.measure(label, `${label}-start`, `${label}-end`);
-        
+
         const measure = performance.getEntriesByName(label)[0];
         const duration = measure ? measure.duration : Date.now() - (this.marks.get(label) || 0);
-        
+
         Logger.info(`Performance: ${label}`, { duration: `${duration.toFixed(2)}ms` });
-        
+
         // Cleanup
         performance.clearMarks(`${label}-start`);
         performance.clearMarks(`${label}-end`);
@@ -179,17 +184,19 @@ const App = {
 
   /**
    * Initialize all registered modules
+   * Modules are initialized sequentially to maintain proper dependency order
    */
   async initializeModules() {
     Performance.start('modules-init');
 
+    // eslint-disable-next-line no-await-in-loop -- Sequential initialization is intentional
     for (const module of this.modules) {
       try {
         const moduleName = module.name || 'anonymous';
         Performance.start(`module-${moduleName}`);
-        
+
         await module.init();
-        
+
         Performance.end(`module-${moduleName}`);
         Logger.info('Module initialized', { module: moduleName });
       } catch (error) {
@@ -288,8 +295,9 @@ const App = {
 /**
  * Example module for future enhancements
  * Demonstrates the modular structure pattern
+ * Prefixed with underscore to indicate intentionally unused template
  */
-const ExampleModule = {
+const _ExampleModule = {
   name: 'ExampleModule',
 
   /**
@@ -297,10 +305,12 @@ const ExampleModule = {
    */
   async init() {
     Logger.info('Example module initializing');
-    
-    // Future enhancement: Add interactive features here
-    // This serves as a template for additional modules
-    
+
+    /*
+     * Future enhancement: Add interactive features here
+     * This serves as a template for additional modules
+     */
+
     return Promise.resolve();
   },
 };
@@ -312,8 +322,10 @@ function bootstrap() {
   Performance.start('bootstrap');
 
   try {
-    // Register modules here
-    // App.registerModule(ExampleModule);
+    /*
+     * Register modules here
+     * App.registerModule(_ExampleModule);
+     */
 
     // Initialize application
     App.init()
