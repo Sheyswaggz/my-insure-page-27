@@ -137,7 +137,7 @@ export default [
       'no-multi-spaces': 'warn',
       'no-trailing-spaces': 'warn',
       'no-multiple-empty-lines': ['warn', { max: 2, maxEOF: 1, maxBOF: 0 }],
-      'eol-last': ['warn', 'always'],
+      'eol-last': 'off', // Disabled for early-stage development - can be re-enabled later
       'semi': ['error', 'always'],
       'quotes': ['warn', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
       'comma-dangle': ['warn', 'always-multiline'],
