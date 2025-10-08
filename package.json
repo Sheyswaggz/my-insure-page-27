@@ -1,7 +1,7 @@
 {
   "name": "my-insure-page-27",
   "version": "1.0.0",
-  "description": "A modern insurance landing page",
+  "description": "A modern, responsive insurance landing page built with vanilla JavaScript, HTML5, and CSS3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,31 +10,34 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest",
-    "test:unit": "vitest --run",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
     "test:coverage": "vitest --coverage --run",
-    "test:watch": "vitest --watch",
-    "test:ui": "vitest --ui"
+    "test:unit": "vitest run"
   },
   "keywords": [
     "insurance",
     "landing-page",
+    "responsive",
+    "vanilla-js",
     "vite"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@vitest/coverage-v8": "^2.1.9",
-    "@vitest/ui": "^2.1.9",
+    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/ui": "^2.1.8",
     "eslint": "^9.17.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-html": "^8.1.2",
     "globals": "^15.14.0",
+    "happy-dom": "^15.11.7",
     "jsdom": "^25.0.1",
     "prettier": "^3.4.2",
     "vite": "^6.0.5",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.8"
   },
   "dependencies": {}
 }
