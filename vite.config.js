@@ -57,7 +57,7 @@ export default defineConfig({
     rollupOptions: {
       // Multi-page configuration - add more entry points as needed
       input: {
-        main: resolve(__dirname, 'index.html'),
+        main: resolve(__dirname, 'src/index.html'),
       },
       output: {
         // Manual chunk splitting for better caching
