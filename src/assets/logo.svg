@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">InsureCo</title>
+  <desc id="logo-desc">InsureCo company logo - Professional insurance services</desc>
+  
+  <defs>
+    <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:var(--color-primary, #2563eb);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:var(--color-primary-dark, #1e40af);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Shield icon representing protection and insurance -->
+  <g id="shield-icon">
+    <!-- Outer shield border -->
+    <path d="M 30 10 L 45 10 C 47 10 48 11 48 13 L 48 28 C 48 35 45 40 37.5 45 C 30 40 27 35 27 28 L 27 13 C 27 11 28 10 30 10 Z" 
+          fill="url(#shield-gradient)" 
+          stroke="var(--color-primary-dark, #1e40af)" 
+          stroke-width="1.5"/>
+    
+    <!-- Inner shield detail -->
+    <path d="M 32 15 L 43 15 C 44 15 44.5 15.5 44.5 16.5 L 44.5 27 C 44.5 32 42.5 36 37.5 39.5 C 32.5 36 30.5 32 30.5 27 L 30.5 16.5 C 30.5 15.5 31 15 32 15 Z" 
+          fill="var(--color-background, #ffffff)" 
+          opacity="0.9"/>
+    
+    <!-- Checkmark symbol -->
+    <path d="M 33 25 L 36 28 L 42 20" 
+          fill="none" 
+          stroke="url(#shield-gradient)" 
+          stroke-width="2.5" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Company name text -->
+  <g id="company-name">
+    <text x="58" y="28" 
+          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" 
+          font-size="22" 
+          font-weight="700" 
+          fill="var(--color-text-primary, #1f2937)" 
+          letter-spacing="-0.5">InsureCo</text>
+    
+    <text x="58" y="42" 
+          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" 
+          font-size="10" 
+          font-weight="400" 
+          fill="var(--color-text-secondary, #6b7280)" 
+          letter-spacing="1">PROTECTION YOU TRUST</text>
+  </g>
+  
+  <!-- Decorative accent line -->
+  <line x1="58" y1="32" x2="175" y2="32" 
+        stroke="var(--color-primary, #2563eb)" 
+        stroke-width="0.5" 
+        opacity="0.3"/>
+</svg>
