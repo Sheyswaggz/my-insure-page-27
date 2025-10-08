@@ -38,20 +38,8 @@ export default defineConfig({
     // Generate source maps for production debugging
     sourcemap: true,
 
-    // Minification configuration
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        // Remove console logs in production
-        drop_console: false,
-        drop_debugger: true,
-        pure_funcs: ['console.debug'],
-      },
-      format: {
-        // Preserve license comments
-        comments: /^!/,
-      },
-    },
+    // Minification configuration - using esbuild (built into Vite)
+    minify: 'esbuild',
 
     // Rollup-specific options
     rollupOptions: {
