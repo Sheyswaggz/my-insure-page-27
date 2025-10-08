@@ -1,13 +1,13 @@
 /**
  * Header Component Module
- * 
+ *
  * Manages responsive header behavior including:
  * - Mobile menu toggle with ARIA state management
  * - Sticky header on scroll using IntersectionObserver
  * - Keyboard accessibility (Escape key to close menu)
  * - Auto-close menu on navigation link clicks
  * - Feature flag support for sticky behavior
- * 
+ *
  * @module components/header
  * @generated-from task-id:TASK-002 sprint:current
  * @modifies header navigation behavior
@@ -24,10 +24,14 @@ const logger = {
    * @param {Object} context - Additional context data
    */
   info: (message, context = {}) => {
-    console.info('[Header]', message, {
-      timestamp: new Date().toISOString(),
-      ...context,
-    });
+    // Logging disabled in production for performance
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.log('[Header]', message, {
+        timestamp: new Date().toISOString(),
+        ...context,
+      });
+    }
   },
 
   /**
@@ -111,22 +115,22 @@ function validateHeaderElements(header) {
  */
 function toggleMobileMenu() {
   const { menuToggle, nav } = headerState.elements;
-  
+
   if (!menuToggle || !nav) {
     logger.error('Cannot toggle menu: required elements not initialized');
     return;
   }
 
   headerState.isMenuOpen = !headerState.isMenuOpen;
-  
+
   /* Update ARIA attributes for accessibility */
   menuToggle.setAttribute('aria-expanded', String(headerState.isMenuOpen));
   nav.setAttribute('aria-hidden', String(!headerState.isMenuOpen));
-  
+
   /* Toggle visual state class */
   nav.classList.toggle('is-open', headerState.isMenuOpen);
   menuToggle.classList.toggle('is-active', headerState.isMenuOpen);
-  
+
   /* Prevent body scroll when menu is open on mobile */
   if (headerState.isMenuOpen) {
     document.body.style.overflow = 'hidden';
@@ -158,13 +162,13 @@ function closeMobileMenu() {
   }
 
   const { menuToggle, nav } = headerState.elements;
-  
+
   if (!menuToggle || !nav) {
     return;
   }
 
   headerState.isMenuOpen = false;
-  
+
   menuToggle.setAttribute('aria-expanded', 'false');
   nav.setAttribute('aria-hidden', 'true');
   nav.classList.remove('is-open');
@@ -193,7 +197,7 @@ function handleMenuToggleClick(event) {
  */
 function handleNavLinkClick(event) {
   const link = event.target.closest('a');
-  
+
   if (!link) {
     return;
   }
@@ -227,7 +231,7 @@ function handleKeyboardEvent(event) {
     if (headerState.isMenuOpen) {
       event.preventDefault();
       closeMobileMenu();
-      
+
       /* Return focus to menu toggle button */
       const { menuToggle } = headerState.elements;
       if (menuToggle) {
@@ -248,7 +252,7 @@ function handleKeyboardEvent(event) {
 function setupStickyHeaderObserver(header) {
   /* Check feature flag */
   const stickyDisabled = header.getAttribute('data-sticky') === 'false';
-  
+
   if (stickyDisabled) {
     headerState.isStickyEnabled = false;
     logger.info('Sticky header behavior disabled via feature flag');
@@ -286,7 +290,7 @@ function setupStickyHeaderObserver(header) {
     entries.forEach((entry) => {
       /* When sentinel is not intersecting, header should be sticky */
       const shouldBeSticky = !entry.isIntersecting;
-      
+
       if (shouldBeSticky) {
         header.classList.add('is-sticky');
         logger.info('Header became sticky', {
@@ -404,9 +408,9 @@ function initializeAriaAttributes() {
   menuToggle.setAttribute('aria-expanded', 'false');
   menuToggle.setAttribute('aria-controls', nav.id || 'primary-navigation');
   menuToggle.setAttribute('aria-label', 'Toggle navigation menu');
-  
+
   nav.setAttribute('aria-hidden', 'true');
-  
+
   /* Ensure nav has an ID for aria-controls reference */
   if (!nav.id) {
     nav.id = 'primary-navigation';
@@ -425,7 +429,7 @@ function cacheElements(header) {
   headerState.elements.menuToggle = header.querySelector('[data-menu-toggle]');
   headerState.elements.nav = header.querySelector('nav');
   headerState.elements.navLinks = Array.from(
-    header.querySelectorAll('nav a')
+    header.querySelectorAll('nav a'),
   );
 
   logger.info('DOM elements cached', {
@@ -436,25 +440,25 @@ function cacheElements(header) {
 /**
  * Initializes the header component
  * Sets up mobile menu toggle, sticky behavior, and accessibility features
- * 
+ *
  * @public
  * @param {string|HTMLElement} [selector='header'] - CSS selector or HTMLElement for header
  * @returns {Function} Cleanup function to remove all event listeners and observers
  * @throws {Error} If header element is not found or required elements are missing
- * 
+ *
  * @example
  * // Initialize with default selector
  * const cleanup = initHeader();
- * 
+ *
  * @example
  * // Initialize with custom selector
  * const cleanup = initHeader('#main-header');
- * 
+ *
  * @example
  * // Initialize with element reference
  * const headerEl = document.querySelector('.site-header');
  * const cleanup = initHeader(headerEl);
- * 
+ *
  * @example
  * // Cleanup when component unmounts
  * const cleanup = initHeader();
@@ -466,7 +470,7 @@ export function initHeader(selector = 'header') {
     logger.info('Initializing header component', { selector });
 
     /* Get header element */
-    const header = typeof selector === 'string' 
+    const header = typeof selector === 'string'
       ? document.querySelector(selector)
       : selector;
 
