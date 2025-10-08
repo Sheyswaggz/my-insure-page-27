@@ -3,279 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Professional insurance solutions tailored to protect what matters most. Get comprehensive coverage with competitive rates and exceptional customer service.">
-  <meta name="keywords" content="insurance, coverage, protection, insurance quotes, insurance company">
-  <meta name="author" content="My Insure Page 27">
-  <meta name="robots" content="index, follow">
+  <meta name="description" content="Professional insurance services for auto, home, life, and health insurance. Get comprehensive coverage with competitive rates.">
   
-  <!-- Open Graph / Social Media Meta Tags -->
+  <!-- Open Graph for social media -->
+  <meta property="og:title" content="My Insure Page - Professional Insurance Services">
+  <meta property="og:description" content="Comprehensive insurance solutions for all your needs">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="My Insure Page 27 - Professional Insurance Solutions">
-  <meta property="og:description" content="Professional insurance solutions tailored to protect what matters most.">
-  <meta property="og:site_name" content="My Insure Page 27">
   
-  <!-- Security Headers -->
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>My Insure Page - Professional Insurance Services</title>
   
-  <!-- Theme Color for Mobile Browsers -->
-  <meta name="theme-color" content="#ffffff">
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/src/styles/main.css" as="style">
   
-  <title>My Insure Page 27 - Professional Insurance Solutions</title>
-  
-  <!-- Preconnect to improve performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="alternate icon" href="/favicon.ico">
-  
-  <!-- Stylesheet -->
   <link rel="stylesheet" href="/src/styles/main.css">
 </head>
 <body>
-  <!-- Skip to main content for accessibility -->
-  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <!-- Skip navigation for accessibility -->
+  <a href="#main" class="skip-link">Skip to main content</a>
   
-  <!-- Header Section -->
-  <header class="site-header" role="banner">
-    <div class="container">
-      <nav class="main-navigation" role="navigation" aria-label="Main navigation">
-        <div class="logo">
-          <a href="/" aria-label="My Insure Page 27 Home">
-            <span class="logo-text">My Insure Page 27</span>
-          </a>
-        </div>
+  <!-- Semantic header with navigation -->
+  <header role="banner" data-sticky="true">
+    <nav role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <!-- Logo -->
+        <a href="/" class="logo" aria-label="My Insure Page - Home">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="40" height="40" rx="8" fill="#007bff"/>
+            <path d="M20 10L12 16V26C12 27.1 12.9 28 14 28H26C27.1 28 28 27.1 28 26V16L20 10Z" fill="white"/>
+            <path d="M20 24C21.66 24 23 22.66 23 21C23 19.34 21.66 18 20 18C18.34 18 17 19.34 17 21C17 22.66 18.34 24 20 24Z" fill="#007bff"/>
+          </svg>
+          <span class="logo-text">My Insure Page</span>
+        </a>
+        
+        <!-- Mobile menu button -->
         <button 
-          class="mobile-menu-toggle" 
-          aria-label="Toggle navigation menu" 
+          type="button" 
+          class="mobile-menu-button" 
+          data-menu-toggle
+          aria-label="Toggle navigation menu"
           aria-expanded="false"
-          aria-controls="main-menu"
-          type="button"
+          aria-controls="main-navigation"
         >
-          <span class="hamburger-icon" aria-hidden="true"></span>
+          <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
         </button>
-        <ul class="nav-menu" id="main-menu" role="list">
-          <li><a href="#services">Services</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
+        
+        <!-- Navigation links -->
+        <ul id="main-navigation" class="nav-links" role="list">
+          <li>
+            <a href="#home" aria-current="page">Home</a>
+          </li>
+          <li>
+            <a href="#services">Services</a>
+          </li>
+          <li>
+            <a href="#about">About</a>
+          </li>
+          <li>
+            <a href="#contact">Contact</a>
+          </li>
         </ul>
-      </nav>
-    </div>
+      </div>
+    </nav>
   </header>
-
-  <!-- Main Content -->
-  <main id="main-content" role="main">
-    <!-- Hero Section -->
-    <section class="hero-section" aria-labelledby="hero-heading">
-      <div class="container">
-        <div class="hero-content">
-          <h1 id="hero-heading" class="hero-title">
-            Professional Insurance Solutions
-          </h1>
-          <p class="hero-description">
-            Protect what matters most with comprehensive coverage tailored to your needs. 
-            Get peace of mind with our trusted insurance solutions.
-          </p>
-          <div class="hero-actions">
-            <a href="#contact" class="btn btn-primary">Get a Quote</a>
-            <a href="#services" class="btn btn-secondary">Learn More</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="services-section" aria-labelledby="services-heading">
-      <div class="container">
-        <h2 id="services-heading" class="section-title">Our Services</h2>
-        <p class="section-description">
-          Comprehensive insurance solutions designed to protect you and your loved ones
-        </p>
-        <div class="services-grid" role="list">
-          <article class="service-card" role="listitem">
-            <div class="service-icon" aria-hidden="true">
-              <span class="icon-placeholder">🏠</span>
-            </div>
-            <h3 class="service-title">Home Insurance</h3>
-            <p class="service-description">
-              Protect your home and belongings with comprehensive coverage options
-            </p>
-          </article>
-          <article class="service-card" role="listitem">
-            <div class="service-icon" aria-hidden="true">
-              <span class="icon-placeholder">🚗</span>
-            </div>
-            <h3 class="service-title">Auto Insurance</h3>
-            <p class="service-description">
-              Drive with confidence knowing you're covered on the road
-            </p>
-          </article>
-          <article class="service-card" role="listitem">
-            <div class="service-icon" aria-hidden="true">
-              <span class="icon-placeholder">❤️</span>
-            </div>
-            <h3 class="service-title">Life Insurance</h3>
-            <p class="service-description">
-              Secure your family's financial future with our life insurance plans
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about-section" aria-labelledby="about-heading">
-      <div class="container">
-        <div class="about-content">
-          <h2 id="about-heading" class="section-title">Why Choose Us</h2>
-          <p class="about-text">
-            With years of experience in the insurance industry, we provide personalized 
-            service and competitive rates. Our commitment to customer satisfaction and 
-            comprehensive coverage options makes us the trusted choice for thousands of families.
-          </p>
-          <ul class="benefits-list" role="list">
-            <li>Competitive rates and flexible payment options</li>
-            <li>24/7 customer support and claims assistance</li>
-            <li>Fast and easy online quote process</li>
-            <li>Trusted by thousands of satisfied customers</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section" aria-labelledby="contact-heading">
-      <div class="container">
-        <h2 id="contact-heading" class="section-title">Get in Touch</h2>
-        <p class="section-description">
-          Ready to get started? Contact us today for a free quote
-        </p>
-        <form class="contact-form" action="/api/contact" method="POST" novalidate>
-          <div class="form-group">
-            <label for="name" class="form-label">
-              Full Name <span class="required" aria-label="required">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="name" 
-              name="name" 
-              class="form-input" 
-              required 
-              aria-required="true"
-              autocomplete="name"
-              placeholder="Enter your full name"
-            >
-            <span class="form-error" role="alert" aria-live="polite"></span>
-          </div>
-          
-          <div class="form-group">
-            <label for="email" class="form-label">
-              Email Address <span class="required" aria-label="required">*</span>
-            </label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              class="form-input" 
-              required 
-              aria-required="true"
-              autocomplete="email"
-              placeholder="your.email@example.com"
-            >
-            <span class="form-error" role="alert" aria-live="polite"></span>
-          </div>
-          
-          <div class="form-group">
-            <label for="phone" class="form-label">
-              Phone Number
-            </label>
-            <input 
-              type="tel" 
-              id="phone" 
-              name="phone" 
-              class="form-input"
-              autocomplete="tel"
-              placeholder="(555) 123-4567"
-            >
-            <span class="form-error" role="alert" aria-live="polite"></span>
-          </div>
-          
-          <div class="form-group">
-            <label for="message" class="form-label">
-              Message <span class="required" aria-label="required">*</span>
-            </label>
-            <textarea 
-              id="message" 
-              name="message" 
-              class="form-textarea" 
-              rows="5" 
-              required 
-              aria-required="true"
-              placeholder="Tell us about your insurance needs"
-            ></textarea>
-            <span class="form-error" role="alert" aria-live="polite"></span>
-          </div>
-          
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary btn-submit">
-              Send Message
-            </button>
-          </div>
-          
-          <div class="form-status" role="status" aria-live="polite" aria-atomic="true"></div>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer Section -->
-  <footer class="site-footer" role="contentinfo">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3 class="footer-title">My Insure Page 27</h3>
-          <p class="footer-text">
-            Professional insurance solutions you can trust
-          </p>
-        </div>
-        <div class="footer-section">
-          <h3 class="footer-title">Quick Links</h3>
-          <ul class="footer-links" role="list">
-            <li><a href="#services">Services</a></li>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="/privacy">Privacy Policy</a></li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h3 class="footer-title">Contact Info</h3>
-          <address class="footer-address">
-            <p>Email: <a href="mailto:info@myinsurepage27.com">info@myinsurepage27.com</a></p>
-            <p>Phone: <a href="tel:+15551234567">(555) 123-4567</a></p>
-          </address>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p class="copyright">
-          &copy; <span id="current-year">2024</span> My Insure Page 27. All rights reserved.
-        </p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Main JavaScript Module -->
-  <script type="module" src="/src/scripts/main.js"></script>
   
-  <!-- Noscript fallback -->
-  <noscript>
-    <div class="noscript-warning" role="alert">
-      <p>
-        For the best experience, please enable JavaScript in your browser. 
-        You can still browse our site, but some features may not work properly.
-      </p>
-    </div>
-  </noscript>
+  <!-- Main content with landmark -->
+  <main id="main" role="main">
+    <!-- Content will be added in subsequent tasks -->
+  </main>
+  
+  <script type="module" src="/src/scripts/main.js"></script>
 </body>
 </html>
