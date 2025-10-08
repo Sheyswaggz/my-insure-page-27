@@ -189,7 +189,8 @@ const App = {
   async initializeModules() {
     Performance.start('modules-init');
 
-    // eslint-disable-next-line no-await-in-loop -- Sequential initialization is intentional
+    // Sequential initialization is intentional to maintain dependency order
+    // eslint-disable-next-line no-await-in-loop
     for (const module of this.modules) {
       try {
         const moduleName = module.name || 'anonymous';
@@ -303,15 +304,13 @@ const _ExampleModule = {
   /**
    * Initialize the example module
    */
-  async init() {
+  init() {
     Logger.info('Example module initializing');
 
     /*
      * Future enhancement: Add interactive features here
      * This serves as a template for additional modules
      */
-
-    return Promise.resolve();
   },
 };
 
