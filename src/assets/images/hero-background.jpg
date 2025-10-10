@@ -1,0 +1,273 @@
+#!/usr/bin/env node
+
+/**
+ * Image Optimization Script
+ * 
+ * Optimizes hero background images to meet production requirements:
+ * - Resizes to 1920x1080
+ * - Compresses JPG to < 150KB
+ * - Generates WebP version < 100KB
+ * - Maintains quality while meeting performance budgets
+ * 
+ * Usage: node scripts/optimize-images.js
+ * Or: npm run optimize:images
+ */
+
+import sharp from 'sharp';
+import { existsSync, mkdirSync, statSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+/* Configuration */
+const CONFIG = {
+  sourceDir: join(__dirname, '../src/assets/images'),
+  outputDir: join(__dirname, '../src/assets/images'),
+  targetWidth: 1920,
+  targetHeight: 1080,
+  jpgMaxSize: 150 * 1024, // 150KB
+  webpMaxSize: 100 * 1024, // 100KB
+  jpgQuality: 85,
+  webpQuality: 80,
+};
+
+/* Logging utility */
+const logger = {
+  info: (message, data = {}) => {
+    console.log(`[INFO] ${message}`, Object.keys(data).length ? data : '');
+  },
+  error: (message, error) => {
+    console.error(`[ERROR] ${message}`, error?.message || error);
+  },
+  warn: (message, data = {}) => {
+    console.warn(`[WARN] ${message}`, Object.keys(data).length ? data : '');
+  },
+  success: (message, data = {}) => {
+    console.log(`[SUCCESS] ✓ ${message}`, Object.keys(data).length ? data : '');
+  },
+};
+
+/**
+ * Ensures directory exists, creates if not
+ */
+function ensureDirectoryExists(dirPath) {
+  if (!existsSync(dirPath)) {
+    mkdirSync(dirPath, { recursive: true });
+    logger.info('Created directory', { path: dirPath });
+  }
+}
+
+/**
+ * Formats bytes to human-readable size
+ */
+function formatBytes(bytes) {
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+}
+
+/**
+ * Gets file size in bytes
+ */
+function getFileSize(filePath) {
+  try {
+    const stats = statSync(filePath);
+    return stats.size;
+  } catch (error) {
+    logger.error('Failed to get file size', error);
+    return 0;
+  }
+}
+
+/**
+ * Optimizes JPG image to meet size requirements
+ */
+async function optimizeJPG(sourcePath, outputPath) {
+  logger.info('Optimizing JPG image...', { source: sourcePath });
+
+  let quality = CONFIG.jpgQuality;
+  let attempt = 0;
+  const maxAttempts = 10;
+
+  while (attempt < maxAttempts) {
+    try {
+      await sharp(sourcePath)
+        .resize(CONFIG.targetWidth, CONFIG.targetHeight, {
+          fit: 'cover',
+          position: 'center',
+        })
+        .jpeg({
+          quality,
+          progressive: true,
+          mozjpeg: true,
+        })
+        .toFile(outputPath);
+
+      const fileSize = getFileSize(outputPath);
+
+      if (fileSize <= CONFIG.jpgMaxSize) {
+        logger.success('JPG optimized successfully', {
+          quality,
+          size: formatBytes(fileSize),
+          target: formatBytes(CONFIG.jpgMaxSize),
+        });
+        return { success: true, size: fileSize, quality };
+      }
+
+      /* Reduce quality and try again */
+      quality -= 5;
+      attempt++;
+
+      if (attempt < maxAttempts) {
+        logger.info(`JPG too large (${formatBytes(fileSize)}), retrying with quality ${quality}...`);
+      }
+    } catch (error) {
+      logger.error('Failed to optimize JPG', error);
+      throw error;
+    }
+  }
+
+  const finalSize = getFileSize(outputPath);
+  logger.warn('JPG optimization completed but exceeds target size', {
+    finalSize: formatBytes(finalSize),
+    target: formatBytes(CONFIG.jpgMaxSize),
+  });
+
+  return { success: false, size: finalSize, quality };
+}
+
+/**
+ * Generates optimized WebP version
+ */
+async function generateWebP(sourcePath, outputPath) {
+  logger.info('Generating WebP image...', { source: sourcePath });
+
+  let quality = CONFIG.webpQuality;
+  let attempt = 0;
+  const maxAttempts = 10;
+
+  while (attempt < maxAttempts) {
+    try {
+      await sharp(sourcePath)
+        .resize(CONFIG.targetWidth, CONFIG.targetHeight, {
+          fit: 'cover',
+          position: 'center',
+        })
+        .webp({
+          quality,
+          effort: 6,
+        })
+        .toFile(outputPath);
+
+      const fileSize = getFileSize(outputPath);
+
+      if (fileSize <= CONFIG.webpMaxSize) {
+        logger.success('WebP generated successfully', {
+          quality,
+          size: formatBytes(fileSize),
+          target: formatBytes(CONFIG.webpMaxSize),
+        });
+        return { success: true, size: fileSize, quality };
+      }
+
+      /* Reduce quality and try again */
+      quality -= 5;
+      attempt++;
+
+      if (attempt < maxAttempts) {
+        logger.info(`WebP too large (${formatBytes(fileSize)}), retrying with quality ${quality}...`);
+      }
+    } catch (error) {
+      logger.error('Failed to generate WebP', error);
+      throw error;
+    }
+  }
+
+  const finalSize = getFileSize(outputPath);
+  logger.warn('WebP generation completed but exceeds target size', {
+    finalSize: formatBytes(finalSize),
+    target: formatBytes(CONFIG.webpMaxSize),
+  });
+
+  return { success: false, size: finalSize, quality };
+}
+
+/**
+ * Main optimization process
+ */
+async function optimizeImages() {
+  logger.info('Starting image optimization process...');
+
+  try {
+    /* Ensure directories exist */
+    ensureDirectoryExists(CONFIG.outputDir);
+
+    /* Check for source image */
+    const sourceImage = join(CONFIG.sourceDir, 'hero-background-source.jpg');
+    
+    if (!existsSync(sourceImage)) {
+      logger.error(
+        'Source image not found',
+        new Error(`Please place source image at: ${sourceImage}`)
+      );
+      logger.info('Alternative source names checked:', {
+        checked: [
+          'hero-background-source.jpg',
+          'hero-background-source.png',
+          'hero-source.jpg',
+        ],
+      });
+      process.exit(1);
+    }
+
+    logger.info('Source image found', { path: sourceImage });
+
+    /* Optimize JPG */
+    const jpgOutput = join(CONFIG.outputDir, 'hero-background.jpg');
+    const jpgResult = await optimizeJPG(sourceImage, jpgOutput);
+
+    /* Generate WebP */
+    const webpOutput = join(CONFIG.outputDir, 'hero-background.webp');
+    const webpResult = await generateWebP(sourceImage, webpOutput);
+
+    /* Summary */
+    logger.info('='.repeat(60));
+    logger.success('Image optimization completed!');
+    logger.info('='.repeat(60));
+    logger.info('Results:', {
+      jpg: {
+        path: jpgOutput,
+        size: formatBytes(jpgResult.size),
+        quality: jpgResult.quality,
+        meetsTarget: jpgResult.success ? '✓' : '✗',
+      },
+      webp: {
+        path: webpOutput,
+        size: formatBytes(webpResult.size),
+        quality: webpResult.quality,
+        meetsTarget: webpResult.success ? '✓' : '✗',
+      },
+    });
+
+    if (!jpgResult.success || !webpResult.success) {
+      logger.warn(
+        'Some images exceed target size. Consider using a different source image or adjusting quality settings.'
+      );
+      process.exit(1);
+    }
+
+    process.exit(0);
+  } catch (error) {
+    logger.error('Image optimization failed', error);
+    process.exit(1);
+  }
+}
+
+/* Run optimization */
+optimizeImages();
