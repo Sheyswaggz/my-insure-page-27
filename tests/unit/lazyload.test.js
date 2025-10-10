@@ -51,9 +51,9 @@ function createMockImage(attributes = {}) {
   
   /* Mock classList for testing */
   img.classList = {
-    add: jest.fn(),
-    remove: jest.fn(),
-    contains: jest.fn(),
+    add: vi.fn(),
+    remove: vi.fn(),
+    contains: vi.fn(),
   };
   
   return img;
@@ -65,22 +65,22 @@ function createMockImage(attributes = {}) {
 function createMockIntersectionObserver() {
   const observers = [];
   
-  const MockObserver = jest.fn(function(callback, options) {
+  const MockObserver = vi.fn(function(callback, options) {
     this.callback = callback;
     this.options = options;
     this.observedElements = new Set();
     observers.push(this);
   });
   
-  MockObserver.prototype.observe = jest.fn(function(element) {
+  MockObserver.prototype.observe = vi.fn(function(element) {
     this.observedElements.add(element);
   });
   
-  MockObserver.prototype.unobserve = jest.fn(function(element) {
+  MockObserver.prototype.unobserve = vi.fn(function(element) {
     this.observedElements.delete(element);
   });
   
-  MockObserver.prototype.disconnect = jest.fn(function() {
+  MockObserver.prototype.disconnect = vi.fn(function() {
     this.observedElements.clear();
   });
   
@@ -105,11 +105,11 @@ function createMockIntersectionObserver() {
 function createMockImageConstructor() {
   const images = [];
   
-  const MockImage = jest.fn(function() {
+  const MockImage = vi.fn(function() {
     this.src = '';
     this.srcset = '';
-    this.addEventListener = jest.fn();
-    this.removeEventListener = jest.fn();
+    this.addEventListener = vi.fn();
+    this.removeEventListener = vi.fn();
     images.push(this);
   });
   
@@ -144,16 +144,16 @@ function createMockImageConstructor() {
 function setupTestEnvironment() {
   /* Mock console methods */
   global.console = {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    log: jest.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    log: vi.fn(),
   };
   
   /* Mock performance API */
   global.performance = {
-    mark: jest.fn(),
-    measure: jest.fn(),
+    mark: vi.fn(),
+    measure: vi.fn(),
   };
   
   /* Setup DOM */
@@ -166,8 +166,8 @@ function setupTestEnvironment() {
 function cleanupTestEnvironment() {
   document.body.innerHTML = '';
   imageStates.clear?.();
-  jest.clearAllMocks();
-  jest.clearAllTimers();
+  vi.clearAllMocks();
+  vi.clearAllTimers();
 }
 
 /* ============================================================================
@@ -349,12 +349,12 @@ describe('🔗 Integration Tests - Image Loading', () => {
     setupTestEnvironment();
     MockImage = createMockImageConstructor();
     global.Image = MockImage;
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
   
   afterEach(() => {
     cleanupTestEnvironment();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
   
   describe('loadImageWithRetry', () => {
@@ -416,7 +416,7 @@ describe('🔗 Integration Tests - Image Loading', () => {
       MockImage.images[0].triggerError();
       
       /* Wait for retry delay (1000ms) */
-      await jest.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(1000);
       
       /* Second attempt succeeds */
       MockImage.images[1].triggerLoad();
@@ -434,11 +434,11 @@ describe('🔗 Integration Tests - Image Loading', () => {
       
       /* First attempt fails */
       MockImage.images[0].triggerError();
-      await jest.advanceTimersByTimeAsync(1000); // 1000ms delay
+      await vi.advanceTimersByTimeAsync(1000); // 1000ms delay
       
       /* Second attempt fails */
       MockImage.images[1].triggerError();
-      await jest.advanceTimersByTimeAsync(2000); // 2000ms delay (exponential)
+      await vi.advanceTimersByTimeAsync(2000); // 2000ms delay (exponential)
       
       /* Third attempt succeeds */
       MockImage.images[2].triggerLoad();
@@ -459,7 +459,7 @@ describe('🔗 Integration Tests - Image Loading', () => {
       
       /* All attempts fail */
       MockImage.images[0].triggerError();
-      await jest.advanceTimersByTimeAsync(100);
+      await vi.advanceTimersByTimeAsync(100);
       
       MockImage.images[1].triggerError();
       
@@ -596,7 +596,7 @@ describe('🔗 Integration Tests - Image Loading', () => {
         'data-srcset': 'test-small.jpg 480w',
       });
       img.tagName = 'IMG';
-      img.removeAttribute = jest.fn();
+      img.removeAttribute = vi.fn();
       const config = { ...DEFAULT_CONFIG };
       
       const loadPromise = loadImage(img, config);
@@ -950,7 +950,7 @@ describe('🚀 Integration Tests - initLazyLoad', () => {
         'data-srcset': 'test-small.jpg 480w',
       });
       img.tagName = 'IMG';
-      img.removeAttribute = jest.fn();
+      img.removeAttribute = vi.fn();
       document.body.appendChild(img);
       
       const cleanup = initLazyLoad('img[data-src]', {
@@ -1255,7 +1255,7 @@ describe('🎯 Edge Cases & Error Scenarios', () => {
     test('should clean up state after successful load', async () => {
       const img = createMockImage({ 'data-src': 'test.jpg' });
       img.tagName = 'IMG';
-      img.removeAttribute = jest.fn();
+      img.removeAttribute = vi.fn();
       const config = { ...DEFAULT_CONFIG };
       
       const loadPromise = loadImage(img, config);
@@ -1333,12 +1333,12 @@ describe('⚡ Performance Tests', () => {
         }
       },
     };
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
   
   afterEach(() => {
     cleanupTestEnvironment();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
   
   test('should handle large number of images efficiently', () => {
@@ -1410,7 +1410,7 @@ describe('⚡ Performance Tests', () => {
     
     const delays = [];
     const originalSetTimeout = global.setTimeout;
-    global.setTimeout = jest.fn((fn, delay) => {
+    global.setTimeout = vi.fn((fn, delay) => {
       delays.push(delay);
       return originalSetTimeout(fn, 0);
     });
@@ -1420,7 +1420,7 @@ describe('⚡ Performance Tests', () => {
     /* Fail all attempts */
     for (let i = 0; i < 4; i++) {
       MockImage.images[i]?.triggerError();
-      await jest.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(1000);
     }
     
     await expect(loadPromise).rejects.toThrow();
