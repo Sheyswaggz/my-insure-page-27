@@ -1,0 +1,650 @@
+/* Hero Section Styles - Production Ready */
+/* File: src/styles/components/hero.css */
+
+/* ============================================================================
+   Hero Section - Full Viewport Layout with Background Image
+   ============================================================================ */
+
+.hero {
+  /* Layout */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  
+  /* Background */
+  background-color: var(--color-primary-900, #1a1a2e);
+  background-image: 
+    linear-gradient(
+      135deg,
+      rgba(26, 26, 46, 0.95) 0%,
+      rgba(26, 26, 46, 0.85) 50%,
+      rgba(26, 26, 46, 0.95) 100%
+    ),
+    var(--hero-bg-image, url('/assets/images/hero-bg.webp'));
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: scroll; /* Mobile default */
+  
+  /* Performance optimization */
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Parallax effect for desktop only */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .hero {
+    background-attachment: fixed;
+  }
+}
+
+/* Disable parallax for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    background-attachment: scroll;
+  }
+}
+
+/* ============================================================================
+   Hero Content Container
+   ============================================================================ */
+
+.hero__container {
+  /* Layout */
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: min(90%, 1200px);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem);
+  text-align: center;
+  
+  /* Animation */
+  animation: hero-fade-in 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Disable animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero__container {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   Hero Headline
+   ============================================================================ */
+
+.hero__headline {
+  /* Typography */
+  margin: 0 0 clamp(1rem, 2vw, 1.5rem) 0;
+  font-family: var(--font-family-heading, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  font-size: clamp(2rem, 5vw + 1rem, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary, #ffffff);
+  
+  /* Text rendering */
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Animation */
+  animation: hero-headline-slide 0.8s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+@keyframes hero-headline-slide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive typography adjustments */
+@media (min-width: 768px) {
+  .hero__headline {
+    max-width: 90%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero__headline {
+    max-width: 80%;
+  }
+}
+
+/* Disable animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero__headline {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   Hero Subheadline
+   ============================================================================ */
+
+.hero__subheadline {
+  /* Typography */
+  margin: 0 0 clamp(2rem, 3vw, 3rem) 0;
+  font-family: var(--font-family-body, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  font-size: clamp(1rem, 2vw + 0.5rem, 1.5rem);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.9));
+  max-width: 65ch;
+  
+  /* Text rendering */
+  text-wrap: pretty;
+  
+  /* Animation */
+  animation: hero-subheadline-slide 0.8s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+@keyframes hero-subheadline-slide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .hero__subheadline {
+    max-width: 75%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero__subheadline {
+    max-width: 60%;
+  }
+}
+
+/* Disable animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero__subheadline {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   Hero CTA Button
+   ============================================================================ */
+
+.hero__cta {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  
+  /* Sizing */
+  min-width: clamp(200px, 30vw, 280px);
+  padding: clamp(0.875rem, 2vw, 1.125rem) clamp(1.5rem, 3vw, 2.5rem);
+  
+  /* Typography */
+  font-family: var(--font-family-body, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+  
+  /* Appearance */
+  color: var(--color-button-text, #ffffff);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500, #3b82f6) 0%,
+    var(--color-primary-600, #2563eb) 100%
+  );
+  border: 2px solid transparent;
+  border-radius: clamp(0.5rem, 1vw, 0.75rem);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 0 rgba(59, 130, 246, 0.5);
+  
+  /* Interaction */
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Transitions */
+  transition: 
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+  
+  /* Animation */
+  animation: hero-cta-slide 0.8s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+@keyframes hero-cta-slide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover state */
+.hero__cta:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-600, #2563eb) 0%,
+    var(--color-primary-700, #1d4ed8) 100%
+  );
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Focus state for keyboard navigation */
+.hero__cta:focus {
+  outline: none;
+  border-color: var(--color-primary-300, #93c5fd);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    0 0 0 4px rgba(59, 130, 246, 0.4);
+}
+
+/* Focus visible for keyboard-only focus */
+.hero__cta:focus-visible {
+  outline: 2px solid var(--color-primary-300, #93c5fd);
+  outline-offset: 2px;
+}
+
+/* Active state */
+.hero__cta:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.05),
+    0 0 0 4px rgba(59, 130, 246, 0.3);
+}
+
+/* Disabled state */
+.hero__cta:disabled,
+.hero__cta[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
+}
+
+/* Disable animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero__cta {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  
+  .hero__cta:hover,
+  .hero__cta:focus,
+  .hero__cta:active {
+    transform: none;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .hero__cta {
+    min-height: 44px; /* Minimum touch target size */
+    padding: 1rem 2rem;
+  }
+  
+  .hero__cta:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   Hero CTA Icon
+   ============================================================================ */
+
+.hero__cta-icon {
+  display: inline-block;
+  width: 1.25em;
+  height: 1.25em;
+  transition: transform 0.2s ease;
+}
+
+.hero__cta:hover .hero__cta-icon {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__cta-icon {
+    transition: none;
+  }
+  
+  .hero__cta:hover .hero__cta-icon {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   Hero Background Video Support (Feature Flag)
+   ============================================================================ */
+
+.hero[data-video-enabled="true"] {
+  background-image: none;
+}
+
+.hero__video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.hero__video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 46, 0.85) 0%,
+    rgba(26, 26, 46, 0.75) 50%,
+    rgba(26, 26, 46, 0.85) 100%
+  );
+}
+
+/* Hide video on mobile for performance */
+@media (max-width: 767px) {
+  .hero__video {
+    display: none;
+  }
+  
+  .hero[data-video-enabled="true"] {
+    background-image: 
+      linear-gradient(
+        135deg,
+        rgba(26, 26, 46, 0.95) 0%,
+        rgba(26, 26, 46, 0.85) 50%,
+        rgba(26, 26, 46, 0.95) 100%
+      ),
+      var(--hero-bg-image, url('/assets/images/hero-bg.webp'));
+  }
+}
+
+/* ============================================================================
+   Scroll Indicator
+   ============================================================================ */
+
+.hero__scroll-indicator {
+  position: absolute;
+  bottom: clamp(2rem, 5vh, 4rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.8));
+  font-size: 0.875rem;
+  text-decoration: none;
+  
+  animation: hero-scroll-bounce 2s ease-in-out infinite;
+  opacity: 0.8;
+  
+  transition: opacity 0.2s ease;
+}
+
+.hero__scroll-indicator:hover {
+  opacity: 1;
+}
+
+.hero__scroll-indicator:focus {
+  outline: 2px solid var(--color-primary-300, #93c5fd);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@keyframes hero-scroll-bounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+.hero__scroll-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Hide scroll indicator on small viewports */
+@media (max-height: 600px) {
+  .hero__scroll-indicator {
+    display: none;
+  }
+}
+
+/* Disable animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll-indicator {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   High Contrast Mode Support
+   ============================================================================ */
+
+@media (prefers-contrast: high) {
+  .hero {
+    background-image: none;
+    background-color: #000000;
+  }
+  
+  .hero__headline,
+  .hero__subheadline {
+    color: #ffffff;
+  }
+  
+  .hero__cta {
+    border: 2px solid #ffffff;
+    background: #0000ff;
+    color: #ffffff;
+  }
+  
+  .hero__cta:hover,
+  .hero__cta:focus {
+    background: #ffffff;
+    color: #000000;
+  }
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+
+@media print {
+  .hero {
+    min-height: auto;
+    background-image: none;
+    background-color: #ffffff;
+    color: #000000;
+    page-break-after: always;
+  }
+  
+  .hero__headline,
+  .hero__subheadline {
+    color: #000000;
+  }
+  
+  .hero__cta,
+  .hero__scroll-indicator,
+  .hero__video {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   Responsive Breakpoints
+   ============================================================================ */
+
+/* Small mobile devices (320px) */
+@media (min-width: 320px) {
+  .hero {
+    min-height: 100svh; /* Small viewport height for mobile */
+  }
+}
+
+/* Tablets and larger (768px) */
+@media (min-width: 768px) {
+  .hero__container {
+    padding: clamp(3rem, 6vw, 5rem) clamp(2rem, 4vw, 3rem);
+  }
+  
+  .hero__headline {
+    letter-spacing: -0.03em;
+  }
+}
+
+/* Desktop and larger (1024px) */
+@media (min-width: 1024px) {
+  .hero {
+    min-height: 100vh;
+  }
+  
+  .hero__container {
+    max-width: 1200px;
+  }
+}
+
+/* Large desktop (1280px+) */
+@media (min-width: 1280px) {
+  .hero__headline {
+    max-width: 70%;
+  }
+  
+  .hero__subheadline {
+    max-width: 55%;
+  }
+}
+
+/* ============================================================================
+   Accessibility Enhancements
+   ============================================================================ */
+
+/* Ensure sufficient color contrast */
+.hero__headline,
+.hero__subheadline {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Skip to content link positioning */
+.hero .skip-link:focus {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+}
+
+/* Screen reader only content */
+.hero__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================================================
+   Performance Optimizations
+   ============================================================================ */
+
+/* Optimize rendering for hero section */
+.hero,
+.hero__container,
+.hero__headline,
+.hero__subheadline,
+.hero__cta {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* GPU acceleration for animations */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__container,
+  .hero__headline,
+  .hero__subheadline,
+  .hero__cta {
+    transform: translateZ(0);
+  }
+}
+
+/* Optimize font loading */
+.hero__headline,
+.hero__subheadline,
+.hero__cta {
+  font-display: swap;
+}
