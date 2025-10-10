@@ -1,0 +1,281 @@
+/**
+ * Image Optimization Script for About Section
+ * 
+ * Converts about-image.jpg to WebP format with quality 85
+ * Target: <70KB file size
+ * 
+ * Usage: node scripts/optimize-about-image.js
+ * 
+ * @requires sharp - npm install --save-dev sharp
+ */
+
+const sharp = require('sharp');
+const fs = require('fs');
+const path = require('path');
+
+/* Configuration */
+const CONFIG = {
+  input: path.resolve(__dirname, '../src/assets/images/about-image.jpg'),
+  output: path.resolve(__dirname, '../src/assets/images/about-image.webp'),
+  targetWidth: 800,
+  targetHeight: 600,
+  webpQuality: 85,
+  webpEffort: 6,
+  maxFileSizeKB: 70,
+};
+
+/* Structured logging */
+const logger = {
+  info: (message, meta = {}) => {
+    console.log(JSON.stringify({
+      level: 'info',
+      timestamp: new Date().toISOString(),
+      message,
+      ...meta,
+    }));
+  },
+  warn: (message, meta = {}) => {
+    console.warn(JSON.stringify({
+      level: 'warn',
+      timestamp: new Date().toISOString(),
+      message,
+      ...meta,
+    }));
+  },
+  error: (message, error, meta = {}) => {
+    console.error(JSON.stringify({
+      level: 'error',
+      timestamp: new Date().toISOString(),
+      message,
+      error: {
+        message: error.message,
+        stack: error.stack,
+        code: error.code,
+      },
+      ...meta,
+    }));
+  },
+};
+
+/**
+ * Validates that the input file exists and is readable
+ * @param {string} inputPath - Path to input image
+ * @throws {Error} If file doesn't exist or isn't readable
+ */
+function validateInputFile(inputPath) {
+  if (!fs.existsSync(inputPath)) {
+    throw new Error(`Input file not found: ${inputPath}`);
+  }
+
+  try {
+    fs.accessSync(inputPath, fs.constants.R_OK);
+  } catch (error) {
+    throw new Error(`Input file is not readable: ${inputPath}`);
+  }
+
+  const stats = fs.statSync(inputPath);
+  if (!stats.isFile()) {
+    throw new Error(`Input path is not a file: ${inputPath}`);
+  }
+
+  logger.info('Input file validated', {
+    path: inputPath,
+    sizeKB: (stats.size / 1024).toFixed(2),
+  });
+}
+
+/**
+ * Ensures output directory exists
+ * @param {string} outputPath - Path to output file
+ */
+function ensureOutputDirectory(outputPath) {
+  const outputDir = path.dirname(outputPath);
+  
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+    logger.info('Created output directory', { path: outputDir });
+  }
+}
+
+/**
+ * Optimizes image to WebP format with specified quality
+ * @param {Object} config - Configuration object
+ * @returns {Promise<Object>} Optimization results
+ */
+async function optimizeToWebP(config) {
+  const startTime = Date.now();
+
+  try {
+    logger.info('Starting WebP optimization', {
+      input: config.input,
+      output: config.output,
+      quality: config.webpQuality,
+      effort: config.webpEffort,
+    });
+
+    /* Get input image metadata */
+    const metadata = await sharp(config.input).metadata();
+    logger.info('Input image metadata', {
+      format: metadata.format,
+      width: metadata.width,
+      height: metadata.height,
+      space: metadata.space,
+      channels: metadata.channels,
+      hasAlpha: metadata.hasAlpha,
+    });
+
+    /* Process image to WebP */
+    await sharp(config.input)
+      .resize(config.targetWidth, config.targetHeight, {
+        fit: 'cover',
+        position: 'center',
+        withoutEnlargement: true,
+      })
+      .webp({
+        quality: config.webpQuality,
+        effort: config.webpEffort,
+        smartSubsample: true,
+        nearLossless: false,
+      })
+      .toFile(config.output);
+
+    /* Verify output file */
+    const outputStats = fs.statSync(config.output);
+    const outputSizeKB = outputStats.size / 1024;
+    const processingTime = Date.now() - startTime;
+
+    const result = {
+      success: true,
+      outputPath: config.output,
+      sizeKB: outputSizeKB,
+      processingTimeMs: processingTime,
+      meetsTarget: outputSizeKB <= config.maxFileSizeKB,
+    };
+
+    logger.info('WebP optimization completed', result);
+
+    /* Warn if file size exceeds target */
+    if (!result.meetsTarget) {
+      logger.warn('Output file exceeds target size', {
+        actualKB: outputSizeKB.toFixed(2),
+        targetKB: config.maxFileSizeKB,
+        excessKB: (outputSizeKB - config.maxFileSizeKB).toFixed(2),
+      });
+    }
+
+    return result;
+
+  } catch (error) {
+    logger.error('WebP optimization failed', error, {
+      input: config.input,
+      output: config.output,
+    });
+    throw error;
+  }
+}
+
+/**
+ * Attempts optimization with progressively lower quality if size target not met
+ * @param {Object} config - Configuration object
+ * @returns {Promise<Object>} Final optimization results
+ */
+async function optimizeWithFallback(config) {
+  const qualityLevels = [85, 80, 75, 70];
+  let lastResult = null;
+
+  for (const quality of qualityLevels) {
+    const attemptConfig = { ...config, webpQuality: quality };
+    
+    try {
+      const result = await optimizeToWebP(attemptConfig);
+      lastResult = result;
+
+      if (result.meetsTarget) {
+        logger.info('Target file size achieved', {
+          quality,
+          sizeKB: result.sizeKB.toFixed(2),
+          targetKB: config.maxFileSizeKB,
+        });
+        return result;
+      }
+
+      logger.info('Retrying with lower quality', {
+        currentQuality: quality,
+        currentSizeKB: result.sizeKB.toFixed(2),
+        targetKB: config.maxFileSizeKB,
+      });
+
+    } catch (error) {
+      logger.error('Optimization attempt failed', error, { quality });
+      throw error;
+    }
+  }
+
+  /* If we get here, even lowest quality didn't meet target */
+  logger.warn('Could not meet target file size with quality adjustments', {
+    finalSizeKB: lastResult.sizeKB.toFixed(2),
+    targetKB: config.maxFileSizeKB,
+    lowestQualityTried: qualityLevels[qualityLevels.length - 1],
+  });
+
+  return lastResult;
+}
+
+/**
+ * Main execution function
+ */
+async function main() {
+  const executionStartTime = Date.now();
+
+  try {
+    logger.info('About image optimization started', {
+      config: CONFIG,
+      nodeVersion: process.version,
+      platform: process.platform,
+    });
+
+    /* Validate input */
+    validateInputFile(CONFIG.input);
+
+    /* Ensure output directory exists */
+    ensureOutputDirectory(CONFIG.output);
+
+    /* Optimize image with fallback quality levels */
+    const result = await optimizeWithFallback(CONFIG);
+
+    /* Generate comparison report */
+    const inputStats = fs.statSync(CONFIG.input);
+    const compressionRatio = ((1 - (result.sizeKB / (inputStats.size / 1024))) * 100).toFixed(2);
+
+    logger.info('Optimization process completed successfully', {
+      inputSizeKB: (inputStats.size / 1024).toFixed(2),
+      outputSizeKB: result.sizeKB.toFixed(2),
+      compressionRatio: `${compressionRatio}%`,
+      totalTimeMs: Date.now() - executionStartTime,
+      meetsTarget: result.meetsTarget,
+    });
+
+    /* Exit with appropriate code */
+    process.exit(result.meetsTarget ? 0 : 1);
+
+  } catch (error) {
+    logger.error('Fatal error during optimization', error, {
+      totalTimeMs: Date.now() - executionStartTime,
+    });
+    process.exit(1);
+  }
+}
+
+/* Execute if run directly */
+if (require.main === module) {
+  main();
+}
+
+/* Export for testing */
+module.exports = {
+  optimizeToWebP,
+  optimizeWithFallback,
+  validateInputFile,
+  ensureOutputDirectory,
+  CONFIG,
+};
