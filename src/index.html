@@ -3,82 +3,206 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Professional insurance services for auto, home, life, and health insurance. Get comprehensive coverage with competitive rates.">
+  <meta name="description" content="Comprehensive insurance solutions for auto, home, life, and health coverage. Protect what matters most with trusted insurance services.">
   
-  <!-- Open Graph for social media -->
-  <meta property="og:title" content="My Insure Page - Professional Insurance Services">
-  <meta property="og:description" content="Comprehensive insurance solutions for all your needs">
+  <!-- Open Graph -->
+  <meta property="og:title" content="My Insure Page - Comprehensive Insurance Solutions">
+  <meta property="og:description" content="Protect what matters most with our trusted insurance services">
   <meta property="og:type" content="website">
   
-  <title>My Insure Page - Professional Insurance Services</title>
+  <title>My Insure Page - Comprehensive Insurance Solutions</title>
   
-  <!-- Preload critical resources -->
-  <link rel="preload" href="/src/styles/main.css" as="style">
+  <!-- Preconnect for performance -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
   
   <link rel="stylesheet" href="/src/styles/main.css">
+  <script type="module" src="/src/scripts/main.js"></script>
 </head>
 <body>
   <!-- Skip navigation for accessibility -->
   <a href="#main" class="skip-link">Skip to main content</a>
   
-  <!-- Semantic header with navigation -->
-  <header role="banner" data-sticky="true">
+  <header role="banner">
     <nav role="navigation" aria-label="Main navigation">
-      <div class="nav-container">
-        <!-- Logo -->
-        <a href="/" class="logo" aria-label="My Insure Page - Home">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="40" height="40" rx="8" fill="#007bff"/>
-            <path d="M20 10L12 16V26C12 27.1 12.9 28 14 28H26C27.1 28 28 27.1 28 26V16L20 10Z" fill="white"/>
-            <path d="M20 24C21.66 24 23 22.66 23 21C23 19.34 21.66 18 20 18C18.34 18 17 19.34 17 21C17 22.66 18.34 24 20 24Z" fill="#007bff"/>
-          </svg>
-          <span class="logo-text">My Insure Page</span>
-        </a>
-        
-        <!-- Mobile menu button -->
-        <button 
-          type="button" 
-          class="mobile-menu-button" 
-          data-menu-toggle
-          aria-label="Toggle navigation menu"
-          aria-expanded="false"
-          aria-controls="main-navigation"
-        >
-          <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-        
-        <!-- Navigation links -->
-        <ul id="main-navigation" class="nav-links" role="list">
-          <li>
-            <a href="#home" aria-current="page">Home</a>
-          </li>
-          <li>
-            <a href="#services">Services</a>
-          </li>
-          <li>
-            <a href="#about">About</a>
-          </li>
-          <li>
-            <a href="#contact">Contact</a>
-          </li>
-        </ul>
-      </div>
+      <!-- Header content will be injected by header.js -->
     </nav>
   </header>
-  
-  <!-- Main content with landmark -->
+
   <main id="main" role="main">
-    <!-- Content will be added in subsequent tasks -->
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <h1 id="hero-title">Protect What Matters Most</h1>
+        <p class="hero-subheadline">Comprehensive insurance solutions tailored to your needs. Get peace of mind with coverage you can trust.</p>
+        <a href="#contact" class="cta-button" aria-label="Get a free quote">Get Your Free Quote</a>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" aria-labelledby="services-title">
+      <div class="container">
+        <h2 id="services-title">Our Insurance Services</h2>
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 8L8 20V32C8 44 16 54 32 56C48 54 56 44 56 32V20L32 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M24 32L28 36L40 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Auto Insurance</h3>
+            <p>Comprehensive coverage for your vehicle with competitive rates and 24/7 roadside assistance.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 28L32 12L52 28V52C52 53.1 51.1 54 50 54H14C12.9 54 12 53.1 12 52V28Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M24 54V36H40V54" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Home Insurance</h3>
+            <p>Protect your home and belongings from unexpected events with customizable coverage options.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 56C44.1503 56 54 46.1503 54 34C54 21.8497 44.1503 12 32 12C19.8497 12 10 21.8497 10 34C10 46.1503 19.8497 56 32 56Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M32 22V34L40 38" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3>Life Insurance</h3>
+            <p>Secure your family's financial future with flexible life insurance plans designed for every stage of life.</p>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon" aria-hidden="true">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 8C20 8 10 18 10 30C10 42 20 52 32 52C44 52 54 42 54 30C54 18 44 8 32 8Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M32 20V32L40 36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M22 44L26 48L32 42" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Health Insurance</h3>
+            <p>Access quality healthcare with comprehensive medical coverage and wellness benefits for you and your family.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" aria-labelledby="about-title">
+      <div class="container">
+        <div class="about-content">
+          <div class="about-text">
+            <h2 id="about-title">About Our Company</h2>
+            <p class="about-intro">For over 25 years, we've been dedicated to providing exceptional insurance solutions that protect what matters most to our clients.</p>
+            <p>Our mission is to deliver personalized insurance coverage with transparency, integrity, and outstanding customer service. We believe everyone deserves access to quality insurance protection without the complexity.</p>
+            <p>With a team of experienced insurance professionals and partnerships with leading carriers, we're committed to finding the right coverage at the right price for every client we serve.</p>
+            <div class="about-values">
+              <h3>Our Core Values</h3>
+              <ul role="list">
+                <li><strong>Trust:</strong> Building lasting relationships through honest communication</li>
+                <li><strong>Excellence:</strong> Delivering superior service and coverage options</li>
+                <li><strong>Innovation:</strong> Leveraging technology to simplify insurance</li>
+                <li><strong>Community:</strong> Supporting the communities we serve</li>
+              </ul>
+            </div>
+          </div>
+          <div class="about-image">
+            <img 
+              src="/src/assets/images/about-image.webp" 
+              alt="Insurance professionals helping clients"
+              loading="lazy"
+              width="600"
+              height="400"
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits" aria-labelledby="benefits-title">
+      <div class="container">
+        <h2 id="benefits-title">Why Choose Us</h2>
+        <div class="benefits-grid">
+          <article class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M16 24L22 30L34 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Competitive Rates</h3>
+            <p>Get the best coverage at prices that fit your budget with our multi-carrier comparison.</p>
+          </article>
+
+          <article class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 4V24L36 30" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <h3>24/7 Support</h3>
+            <p>Our dedicated team is available around the clock to assist you when you need us most.</p>
+          </article>
+
+          <article class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M38 18L24 8L10 18V36C10 37.1 10.9 38 12 38H36C37.1 38 38 37.1 38 36V18Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18 38V24H30V38" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Fast Claims</h3>
+            <p>Experience quick and hassle-free claims processing with our streamlined digital system.</p>
+          </article>
+
+          <article class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 4L6 14V24C6 34 12 42 24 44C36 42 42 34 42 24V14L24 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M24 24C26.2091 24 28 22.2091 28 20C28 17.7909 26.2091 16 24 16C21.7909 16 20 17.7909 20 20C20 22.2091 21.7909 24 24 24Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M16 36C16 32 20 28 24 28C28 28 32 32 32 36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3>Expert Advisors</h3>
+            <p>Work with licensed insurance professionals who understand your unique needs and goals.</p>
+          </article>
+
+          <article class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 8H8C5.79086 8 4 9.79086 4 12V36C4 38.2091 5.79086 40 8 40H40C42.2091 40 44 38.2091 44 36V12C44 9.79086 42.2091 8 40 8Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M4 18H44" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 28H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3>Flexible Payment</h3>
+            <p>Choose from multiple payment options and schedules that work best for your lifestyle.</p>
+          </article>
+
+          <article class="benefit-item">
+            <div class="benefit-icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M24 12V24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M24 32H24.02" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3>Transparent Process</h3>
+            <p>No hidden fees or surprises. We believe in clear communication and honest pricing.</p>
+          </article>
+        </div>
+      </div>
+    </section>
   </main>
-  
-  <script type="module" src="/src/scripts/main.js"></script>
+
+  <footer role="contentinfo">
+    <!-- Footer content will be added in future tasks -->
+  </footer>
 </body>
 </html>
