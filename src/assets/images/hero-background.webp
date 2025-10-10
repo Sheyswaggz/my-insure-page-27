@@ -1,0 +1,442 @@
+#!/usr/bin/env node
+
+/**
+ * Hero Background WebP Generator
+ * 
+ * Generates optimized WebP version of hero background image for production use.
+ * Meets strict performance requirements:
+ * - Target size: <100KB
+ * - Quality: 85
+ * - Dimensions: 1920x1080
+ * - Format: WebP with fallback support
+ * 
+ * Usage: node scripts/generate-hero-webp.js
+ * Or: npm run generate:hero-webp
+ * 
+ * Requirements:
+ * - Source image: src/assets/images/hero-background.jpg must exist
+ * - Output: src/assets/images/hero-background.webp
+ */
+
+import sharp from 'sharp';
+import { existsSync, mkdirSync, statSync, readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { createHash } from 'crypto';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+/* Configuration */
+const CONFIG = {
+  sourceFile: join(__dirname, '../src/assets/images/hero-background.jpg'),
+  outputFile: join(__dirname, '../src/assets/images/hero-background.webp'),
+  targetWidth: 1920,
+  targetHeight: 1080,
+  maxFileSize: 100 * 1024, // 100KB
+  initialQuality: 85,
+  minQuality: 60,
+  qualityStep: 3,
+  maxAttempts: 15,
+};
+
+/* Structured logging utility */
+const logger = {
+  info: (message, context = {}) => {
+    const timestamp = new Date().toISOString();
+    console.log(JSON.stringify({
+      level: 'INFO',
+      timestamp,
+      message,
+      ...context,
+    }));
+  },
+  error: (message, error, context = {}) => {
+    const timestamp = new Date().toISOString();
+    console.error(JSON.stringify({
+      level: 'ERROR',
+      timestamp,
+      message,
+      error: error?.message || String(error),
+      stack: error?.stack,
+      ...context,
+    }));
+  },
+  warn: (message, context = {}) => {
+    const timestamp = new Date().toISOString();
+    console.warn(JSON.stringify({
+      level: 'WARN',
+      timestamp,
+      message,
+      ...context,
+    }));
+  },
+  success: (message, context = {}) => {
+    const timestamp = new Date().toISOString();
+    console.log(JSON.stringify({
+      level: 'SUCCESS',
+      timestamp,
+      message,
+      ...context,
+    }));
+  },
+};
+
+/**
+ * Formats bytes to human-readable size
+ * @param {number} bytes - Size in bytes
+ * @returns {string} Formatted size string
+ */
+function formatBytes(bytes) {
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
+  const k = 1024;
+  const decimals = 2;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+}
+
+/**
+ * Gets file size in bytes
+ * @param {string} filePath - Path to file
+ * @returns {number} File size in bytes
+ */
+function getFileSize(filePath) {
+  try {
+    if (!existsSync(filePath)) {
+      return 0;
+    }
+    const stats = statSync(filePath);
+    return stats.size;
+  } catch (error) {
+    logger.error('Failed to get file size', error, { filePath });
+    return 0;
+  }
+}
+
+/**
+ * Calculates file hash for integrity verification
+ * @param {string} filePath - Path to file
+ * @returns {string} SHA-256 hash
+ */
+function calculateFileHash(filePath) {
+  try {
+    const fileBuffer = readFileSync(filePath);
+    const hashSum = createHash('sha256');
+    hashSum.update(fileBuffer);
+    return hashSum.digest('hex');
+  } catch (error) {
+    logger.error('Failed to calculate file hash', error, { filePath });
+    return null;
+  }
+}
+
+/**
+ * Validates source image exists and is readable
+ * @param {string} sourcePath - Path to source image
+ * @throws {Error} If source image is invalid
+ */
+function validateSourceImage(sourcePath) {
+  logger.info('Validating source image', { sourcePath });
+
+  if (!existsSync(sourcePath)) {
+    throw new Error(`Source image not found: ${sourcePath}`);
+  }
+
+  const sourceSize = getFileSize(sourcePath);
+  if (sourceSize === 0) {
+    throw new Error(`Source image is empty: ${sourcePath}`);
+  }
+
+  logger.info('Source image validated', {
+    sourcePath,
+    size: formatBytes(sourceSize),
+    sizeBytes: sourceSize,
+  });
+}
+
+/**
+ * Ensures output directory exists
+ * @param {string} outputPath - Path to output file
+ */
+function ensureOutputDirectory(outputPath) {
+  const outputDir = dirname(outputPath);
+  
+  if (!existsSync(outputDir)) {
+    logger.info('Creating output directory', { outputDir });
+    mkdirSync(outputDir, { recursive: true });
+  }
+}
+
+/**
+ * Generates WebP image with specified quality
+ * @param {string} sourcePath - Source image path
+ * @param {string} outputPath - Output image path
+ * @param {number} quality - WebP quality (0-100)
+ * @returns {Promise<{size: number, quality: number}>} Generation result
+ */
+async function generateWebPWithQuality(sourcePath, outputPath, quality) {
+  try {
+    await sharp(sourcePath)
+      .resize(CONFIG.targetWidth, CONFIG.targetHeight, {
+        fit: 'cover',
+        position: 'center',
+        withoutEnlargement: false,
+      })
+      .webp({
+        quality,
+        effort: 6, // Maximum compression effort
+        smartSubsample: true,
+        nearLossless: false,
+      })
+      .toFile(outputPath);
+
+    const fileSize = getFileSize(outputPath);
+    
+    return {
+      size: fileSize,
+      quality,
+    };
+  } catch (error) {
+    logger.error('Failed to generate WebP', error, {
+      sourcePath,
+      outputPath,
+      quality,
+    });
+    throw error;
+  }
+}
+
+/**
+ * Optimizes WebP generation to meet size requirements
+ * @param {string} sourcePath - Source image path
+ * @param {string} outputPath - Output image path
+ * @returns {Promise<{success: boolean, size: number, quality: number, attempts: number}>}
+ */
+async function optimizeWebPGeneration(sourcePath, outputPath) {
+  logger.info('Starting WebP optimization', {
+    source: sourcePath,
+    output: outputPath,
+    targetSize: formatBytes(CONFIG.maxFileSize),
+    initialQuality: CONFIG.initialQuality,
+  });
+
+  let quality = CONFIG.initialQuality;
+  let attempt = 0;
+  let lastResult = null;
+
+  while (attempt < CONFIG.maxAttempts) {
+    attempt++;
+
+    logger.info('Generation attempt', {
+      attempt,
+      maxAttempts: CONFIG.maxAttempts,
+      quality,
+    });
+
+    const result = await generateWebPWithQuality(sourcePath, outputPath, quality);
+    lastResult = result;
+
+    const sizeRatio = (result.size / CONFIG.maxFileSize) * 100;
+
+    logger.info('Generation result', {
+      attempt,
+      quality: result.quality,
+      size: formatBytes(result.size),
+      sizeBytes: result.size,
+      targetSize: formatBytes(CONFIG.maxFileSize),
+      sizeRatio: `${sizeRatio.toFixed(1)}%`,
+      meetsTarget: result.size <= CONFIG.maxFileSize,
+    });
+
+    if (result.size <= CONFIG.maxFileSize) {
+      logger.success('WebP optimization successful', {
+        attempts: attempt,
+        finalQuality: result.quality,
+        finalSize: formatBytes(result.size),
+        finalSizeBytes: result.size,
+        compressionRatio: `${((1 - result.size / getFileSize(sourcePath)) * 100).toFixed(1)}%`,
+      });
+
+      return {
+        success: true,
+        size: result.size,
+        quality: result.quality,
+        attempts: attempt,
+      };
+    }
+
+    /* Calculate next quality value */
+    if (quality > CONFIG.minQuality) {
+      quality = Math.max(CONFIG.minQuality, quality - CONFIG.qualityStep);
+      logger.info('Reducing quality for next attempt', {
+        newQuality: quality,
+        minQuality: CONFIG.minQuality,
+      });
+    } else {
+      logger.warn('Reached minimum quality threshold', {
+        minQuality: CONFIG.minQuality,
+        currentSize: formatBytes(result.size),
+        targetSize: formatBytes(CONFIG.maxFileSize),
+      });
+      break;
+    }
+  }
+
+  /* Failed to meet target size */
+  logger.warn('WebP optimization completed but exceeds target size', {
+    attempts: attempt,
+    finalQuality: lastResult.quality,
+    finalSize: formatBytes(lastResult.size),
+    targetSize: formatBytes(CONFIG.maxFileSize),
+    overage: formatBytes(lastResult.size - CONFIG.maxFileSize),
+  });
+
+  return {
+    success: false,
+    size: lastResult.size,
+    quality: lastResult.quality,
+    attempts: attempt,
+  };
+}
+
+/**
+ * Verifies generated WebP image integrity
+ * @param {string} outputPath - Path to generated image
+ * @returns {Promise<boolean>} True if image is valid
+ */
+async function verifyGeneratedImage(outputPath) {
+  try {
+    logger.info('Verifying generated image', { outputPath });
+
+    const metadata = await sharp(outputPath).metadata();
+
+    const isValid = 
+      metadata.format === 'webp' &&
+      metadata.width === CONFIG.targetWidth &&
+      metadata.height === CONFIG.targetHeight;
+
+    if (isValid) {
+      logger.info('Image verification successful', {
+        format: metadata.format,
+        width: metadata.width,
+        height: metadata.height,
+        space: metadata.space,
+        channels: metadata.channels,
+        hasAlpha: metadata.hasAlpha,
+      });
+    } else {
+      logger.error('Image verification failed', new Error('Invalid image properties'), {
+        expected: {
+          format: 'webp',
+          width: CONFIG.targetWidth,
+          height: CONFIG.targetHeight,
+        },
+        actual: {
+          format: metadata.format,
+          width: metadata.width,
+          height: metadata.height,
+        },
+      });
+    }
+
+    return isValid;
+  } catch (error) {
+    logger.error('Image verification failed', error, { outputPath });
+    return false;
+  }
+}
+
+/**
+ * Main execution function
+ */
+async function main() {
+  const startTime = Date.now();
+
+  logger.info('Starting hero background WebP generation', {
+    config: {
+      sourceFile: CONFIG.sourceFile,
+      outputFile: CONFIG.outputFile,
+      targetDimensions: `${CONFIG.targetWidth}x${CONFIG.targetHeight}`,
+      maxFileSize: formatBytes(CONFIG.maxFileSize),
+      initialQuality: CONFIG.initialQuality,
+    },
+  });
+
+  try {
+    /* Validate source image */
+    validateSourceImage(CONFIG.sourceFile);
+
+    /* Calculate source hash for tracking */
+    const sourceHash = calculateFileHash(CONFIG.sourceFile);
+    logger.info('Source image hash calculated', {
+      hash: sourceHash,
+    });
+
+    /* Ensure output directory exists */
+    ensureOutputDirectory(CONFIG.outputFile);
+
+    /* Generate optimized WebP */
+    const result = await optimizeWebPGeneration(CONFIG.sourceFile, CONFIG.outputFile);
+
+    /* Verify generated image */
+    const isValid = await verifyGeneratedImage(CONFIG.outputFile);
+
+    if (!isValid) {
+      throw new Error('Generated image failed validation');
+    }
+
+    /* Calculate output hash */
+    const outputHash = calculateFileHash(CONFIG.outputFile);
+
+    const duration = Date.now() - startTime;
+
+    /* Final summary */
+    logger.info('='.repeat(80));
+    logger.success('Hero background WebP generation completed', {
+      duration: `${duration}ms`,
+      source: {
+        path: CONFIG.sourceFile,
+        size: formatBytes(getFileSize(CONFIG.sourceFile)),
+        hash: sourceHash,
+      },
+      output: {
+        path: CONFIG.outputFile,
+        size: formatBytes(result.size),
+        quality: result.quality,
+        attempts: result.attempts,
+        meetsTarget: result.success,
+        hash: outputHash,
+      },
+      performance: {
+        compressionRatio: `${((1 - result.size / getFileSize(CONFIG.sourceFile)) * 100).toFixed(1)}%`,
+        targetMet: result.success ? 'YES' : 'NO',
+      },
+    });
+    logger.info('='.repeat(80));
+
+    if (!result.success) {
+      logger.warn('Image exceeds target size but is still usable', {
+        recommendation: 'Consider using a different source image or adjusting quality requirements',
+      });
+      process.exit(1);
+    }
+
+    process.exit(0);
+
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    
+    logger.error('Hero background WebP generation failed', error, {
+      duration: `${duration}ms`,
+      config: CONFIG,
+    });
+
+    process.exit(1);
+  }
+}
+
+/* Execute main function */
+main();
