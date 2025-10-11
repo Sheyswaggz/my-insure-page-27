@@ -1,0 +1,54 @@
+#!/bin/bash
+# optimize-about-image.sh
+# Place in project root and run: bash optimize-about-image.sh source-image.jpg
+
+set -e
+
+SOURCE_IMAGE="$1"
+OUTPUT_DIR="src/assets/images"
+JPEG_OUTPUT="${OUTPUT_DIR}/about-image.jpg"
+WEBP_OUTPUT="${OUTPUT_DIR}/about-image.webp"
+
+if [ ! -f "$SOURCE_IMAGE" ]; then
+  echo "Error: Source image not found: $SOURCE_IMAGE"
+  exit 1
+fi
+
+echo "Optimizing about section image..."
+
+# Create output directory if it doesn't exist
+mkdir -p "$OUTPUT_DIR"
+
+# Resize and optimize JPEG
+convert "$SOURCE_IMAGE" \
+  -resize 800x600^ \
+  -gravity center \
+  -extent 800x600 \
+  -quality 85 \
+  -sampling-factor 4:2:0 \
+  -strip \
+  -interlace Plane \
+  "$JPEG_OUTPUT"
+
+# Further optimize JPEG
+jpegoptim --size=100k --strip-all "$JPEG_OUTPUT"
+
+# Create WebP version
+cwebp -q 80 -m 6 -af "$JPEG_OUTPUT" -o "$WEBP_OUTPUT"
+
+# Validate results
+JPEG_SIZE=$(stat -f%z "$JPEG_OUTPUT" 2>/dev/null || stat -c%s "$JPEG_OUTPUT")
+WEBP_SIZE=$(stat -f%z "$WEBP_OUTPUT" 2>/dev/null || stat -c%s "$WEBP_OUTPUT")
+
+echo "✓ JPEG created: $JPEG_OUTPUT ($(($JPEG_SIZE / 1024))KB)"
+echo "✓ WebP created: $WEBP_OUTPUT ($(($WEBP_SIZE / 1024))KB)"
+
+if [ $JPEG_SIZE -gt 102400 ]; then
+  echo "⚠ Warning: JPEG size exceeds 100KB target"
+fi
+
+if [ $WEBP_SIZE -gt 81920 ]; then
+  echo "⚠ Warning: WebP size exceeds 80KB target"
+fi
+
+echo "✓ Optimization complete"
