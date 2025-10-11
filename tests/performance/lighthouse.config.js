@@ -1,4 +1,3 @@
-```javascript
 /**
  * Lighthouse CI Configuration
  * 
@@ -11,6 +10,9 @@
 module.exports = {
   ci: {
     collect: {
+      /* Static directory where built files are located */
+      staticDistDir: './dist',
+      
       /* URLs to audit - adjust based on deployment environment */
       url: [
         'http://localhost:5173/',
