@@ -1,0 +1,263 @@
+#!/usr/bin/env node
+
+/**
+ * Image Optimization Script
+ * 
+ * Optimizes hero background images to meet production requirements:
+ * - Resizes to 1920x1080
+ * - Compresses JPG to < 150KB
+ * - Generates WebP version < 100KB
+ * - Maintains quality while meeting performance budgets
+ * 
+ * Usage: node scripts/optimize-images.js
+ * Or: npm run optimize:images
+ */
+
+import sharp from 'sharp';
+import { existsSync, mkdirSync, statSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+/* Configuration */
+const CONFIG = {
+  sourceDir: join(__dirname, '../src/assets/images'),
+  outputDir: join(__dirname, '../src/assets/images'),
+  targetWidth: 1920,
+  targetHeight: 1080,
+  jpgMaxSize: 150 * 1024, // 150KB
+  webpMaxSize: 100 * 1024, // 100KB
+  jpgQuality: 85,
+  webpQuality: 80,
+  minQuality: 60,
+};
+
+/* Logger utility */
+const logger = {
+  info: (message, data = {}) => {
+    console.log(`[INFO] ${message}`, Object.keys(data).length ? data : '');
+  },
+  error: (message, error) => {
+    console.error(`[ERROR] ${message}`, error?.message || error);
+  },
+  warn: (message, data = {}) => {
+    console.warn(`[WARN] ${message}`, Object.keys(data).length ? data : '');
+  },
+  success: (message, data = {}) => {
+    console.log(`[SUCCESS] ✓ ${message}`, Object.keys(data).length ? data : '');
+  },
+};
+
+/**
+ * Ensures directory exists, creates if not
+ */
+function ensureDirectoryExists(dirPath) {
+  if (!existsSync(dirPath)) {
+    mkdirSync(dirPath, { recursive: true });
+    logger.info('Created directory', { path: dirPath });
+  }
+}
+
+/**
+ * Gets file size in KB
+ */
+function getFileSizeKB(filePath) {
+  try {
+    const stats = statSync(filePath);
+    return (stats.size / 1024).toFixed(2);
+  } catch (error) {
+    return 0;
+  }
+}
+
+/**
+ * Optimizes image to target size by adjusting quality
+ */
+async function optimizeToTargetSize(
+  sharpInstance,
+  outputPath,
+  format,
+  maxSize,
+  initialQuality
+) {
+  let quality = initialQuality;
+  let attempt = 0;
+  const maxAttempts = 10;
+
+  while (attempt < maxAttempts) {
+    attempt++;
+
+    try {
+      /* Generate image with current quality */
+      if (format === 'jpeg') {
+        await sharpInstance
+          .jpeg({ quality, progressive: true, mozjpeg: true })
+          .toFile(outputPath);
+      } else if (format === 'webp') {
+        await sharpInstance
+          .webp({ quality, effort: 6 })
+          .toFile(outputPath);
+      }
+
+      /* Check file size */
+      const stats = statSync(outputPath);
+      const fileSize = stats.size;
+
+      logger.info(`Attempt ${attempt}`, {
+        quality,
+        size: `${(fileSize / 1024).toFixed(2)}KB`,
+        target: `${(maxSize / 1024).toFixed(2)}KB`,
+      });
+
+      /* Success if under target size */
+      if (fileSize <= maxSize) {
+        return { success: true, quality, size: fileSize };
+      }
+
+      /* Reduce quality for next attempt */
+      quality -= 5;
+
+      /* Fail if quality too low */
+      if (quality < CONFIG.minQuality) {
+        logger.warn('Minimum quality reached', {
+          quality: CONFIG.minQuality,
+          size: `${(fileSize / 1024).toFixed(2)}KB`,
+        });
+        return { success: false, quality, size: fileSize };
+      }
+
+    } catch (error) {
+      logger.error(`Optimization attempt ${attempt} failed`, error);
+      throw error;
+    }
+  }
+
+  return { success: false, quality, size: 0 };
+}
+
+/**
+ * Processes hero background image
+ */
+async function processHeroBackground() {
+  try {
+    logger.info('Starting hero background image optimization');
+
+    /* Ensure output directory exists */
+    ensureDirectoryExists(CONFIG.outputDir);
+
+    /* Source image path */
+    const sourceImage = join(CONFIG.sourceDir, 'hero-background-source.jpg');
+
+    /* Check if source exists */
+    if (!existsSync(sourceImage)) {
+      logger.error(
+        'Source image not found',
+        new Error(`Expected: ${sourceImage}`)
+      );
+      logger.info('Please place source image at:', { path: sourceImage });
+      logger.info('Or download from recommended sources (see README.md)');
+      process.exit(1);
+    }
+
+    logger.info('Source image found', { path: sourceImage });
+
+    /* Load and resize image */
+    const image = sharp(sourceImage);
+    const metadata = await image.metadata();
+
+    logger.info('Source image metadata', {
+      width: metadata.width,
+      height: metadata.height,
+      format: metadata.format,
+      size: `${getFileSizeKB(sourceImage)}KB`,
+    });
+
+    /* Resize to target dimensions */
+    const resized = image.resize(CONFIG.targetWidth, CONFIG.targetHeight, {
+      fit: 'cover',
+      position: 'center',
+    });
+
+    /* Optimize JPG */
+    logger.info('Optimizing JPG format...');
+    const jpgPath = join(CONFIG.outputDir, 'hero-background.jpg');
+    const jpgResult = await optimizeToTargetSize(
+      resized.clone(),
+      jpgPath,
+      'jpeg',
+      CONFIG.jpgMaxSize,
+      CONFIG.jpgQuality
+    );
+
+    if (jpgResult.success) {
+      logger.success('JPG optimization complete', {
+        path: jpgPath,
+        size: `${(jpgResult.size / 1024).toFixed(2)}KB`,
+        quality: jpgResult.quality,
+      });
+    } else {
+      logger.warn('JPG exceeds target size', {
+        size: `${(jpgResult.size / 1024).toFixed(2)}KB`,
+        target: `${(CONFIG.jpgMaxSize / 1024).toFixed(2)}KB`,
+      });
+    }
+
+    /* Optimize WebP */
+    logger.info('Optimizing WebP format...');
+    const webpPath = join(CONFIG.outputDir, 'hero-background.webp');
+    const webpResult = await optimizeToTargetSize(
+      resized.clone(),
+      webpPath,
+      'webp',
+      CONFIG.webpMaxSize,
+      CONFIG.webpQuality
+    );
+
+    if (webpResult.success) {
+      logger.success('WebP optimization complete', {
+        path: webpPath,
+        size: `${(webpResult.size / 1024).toFixed(2)}KB`,
+        quality: webpResult.quality,
+      });
+    } else {
+      logger.warn('WebP exceeds target size', {
+        size: `${(webpResult.size / 1024).toFixed(2)}KB`,
+        target: `${(CONFIG.webpMaxSize / 1024).toFixed(2)}KB`,
+      });
+    }
+
+    /* Summary */
+    logger.success('Image optimization complete', {
+      jpg: `${getFileSizeKB(jpgPath)}KB`,
+      webp: `${getFileSizeKB(webpPath)}KB`,
+    });
+
+    /* Performance validation */
+    const jpgSize = statSync(jpgPath).size;
+    const webpSize = statSync(webpPath).size;
+
+    if (jpgSize > CONFIG.jpgMaxSize || webpSize > CONFIG.webpMaxSize) {
+      logger.warn('Performance budget exceeded', {
+        jpgBudget: jpgSize <= CONFIG.jpgMaxSize ? 'PASS' : 'FAIL',
+        webpBudget: webpSize <= CONFIG.webpMaxSize ? 'PASS' : 'FAIL',
+      });
+      logger.info('Consider using a different source image or adjusting quality settings');
+    }
+
+  } catch (error) {
+    logger.error('Image optimization failed', error);
+    process.exit(1);
+  }
+}
+
+/* Execute if run directly */
+if (import.meta.url === `file://${process.argv[1]}`) {
+  processHeroBackground().catch((error) => {
+    logger.error('Unhandled error', error);
+    process.exit(1);
+  });
+}
+
+export { processHeroBackground };
