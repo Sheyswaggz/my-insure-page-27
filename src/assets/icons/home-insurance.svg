@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="homeInsuranceIconTitle" role="img">
+  <title id="homeInsuranceIconTitle">Home Insurance</title>
+  <path d="M8 28L32 8l24 20v28H8z"/>
+  <path d="M16 56V32h32v24"/>
+  <path d="M24 56V40h16v16"/>
+  <path d="M32 8v8"/>
+  <circle cx="40" cy="24" r="2"/>
+  <path d="M12 28h40"/>
+  <path d="M20 32v8"/>
+  <path d="M44 32v8"/>
+</svg>
