@@ -1,249 +1,210 @@
+/* src/styles/main.css */
+
 /**
  * Main Stylesheet
- * Entry point for all application styles
- * Imports component styles and defines global CSS custom properties
+ * 
+ * Central stylesheet that imports all component styles and defines global utilities.
+ * Implements CSS custom properties for theming, smooth scrolling behavior, and
+ * responsive section spacing utilities.
+ * 
+ * Architecture:
+ * - CSS custom properties for design tokens
+ * - Component style imports
+ * - Global utility classes
+ * - Smooth scroll behavior
+ * - Section spacing system
+ * 
+ * Performance:
+ * - Minimal global styles to reduce specificity conflicts
+ * - Component-based architecture for better code splitting
+ * - CSS containment where applicable
  */
 
 /* ============================================================================
-   Component Imports
-   ========================================================================= */
-
-@import './components/header.css';
-
-/* ============================================================================
-   CSS Custom Properties - Global Design Tokens
+   CSS Custom Properties (Design Tokens)
    ========================================================================= */
 
 :root {
-  /* Header theming properties */
-  --header-height: 4rem;
-  --header-bg-color: hsl(0 0% 100%);
-  --header-text-color: hsl(217 19% 27%);
-  --header-transition-timing: 250ms ease-in-out;
-  
-  /* Color palette */
-  --color-primary: hsl(217 91% 60%);
-  --color-primary-dark: hsl(217 91% 40%);
-  --color-primary-light: hsl(217 91% 97%);
-  
-  --color-text: hsl(217 19% 27%);
-  --color-text-light: hsl(217 19% 45%);
-  --color-background: hsl(0 0% 100%);
-  --color-surface: hsl(0 0% 98%);
-  --color-border: hsl(0 0% 90%);
-  
-  /* Typography */
-  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-family-heading: var(--font-family-base);
-  
+  /* Color Palette - Primary */
+  --color-primary-50: hsl(217, 91%, 97%);
+  --color-primary-100: hsl(217, 91%, 92%);
+  --color-primary-200: hsl(217, 91%, 85%);
+  --color-primary-300: hsl(217, 91%, 75%);
+  --color-primary-400: hsl(217, 91%, 65%);
+  --color-primary-500: hsl(217, 91%, 60%);
+  --color-primary-600: hsl(217, 91%, 55%);
+  --color-primary-700: hsl(217, 91%, 45%);
+  --color-primary-800: hsl(217, 91%, 35%);
+  --color-primary-900: hsl(217, 91%, 20%);
+
+  /* Color Palette - Grayscale */
+  --color-gray-50: hsl(0, 0%, 98%);
+  --color-gray-100: hsl(0, 0%, 95%);
+  --color-gray-200: hsl(0, 0%, 90%);
+  --color-gray-300: hsl(0, 0%, 80%);
+  --color-gray-400: hsl(0, 0%, 70%);
+  --color-gray-500: hsl(0, 0%, 60%);
+  --color-gray-600: hsl(0, 0%, 50%);
+  --color-gray-700: hsl(0, 0%, 40%);
+  --color-gray-750: hsl(0, 0%, 30%);
+  --color-gray-800: hsl(0, 0%, 20%);
+  --color-gray-900: hsl(0, 0%, 10%);
+
+  /* Semantic Colors */
+  --color-background-primary: hsl(0, 0%, 100%);
+  --color-background-secondary: hsl(0, 0%, 98%);
+  --color-text-primary: hsl(0, 0%, 10%);
+  --color-text-secondary: hsl(0, 0%, 40%);
+  --color-border: hsl(0, 0%, 90%);
+
+  /* Section Backgrounds */
+  --section-bg-light: hsl(0, 0%, 100%);
+  --section-bg-gray: hsl(0, 0%, 98%);
+  --section-bg-dark: hsl(217, 91%, 20%);
+
+  /* Typography Scale */
+  --font-family-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
   --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
   --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
   --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
   --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
   --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
-  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  --font-size-3xl: clamp(2rem, 1.7rem + 1.5vw, 3rem);
-  
-  --line-height-tight: 1.25;
-  --line-height-base: 1.5;
-  --line-height-relaxed: 1.75;
-  
-  /* Spacing scale */
-  --space-xs: max(0.25rem, 1vw);
-  --space-sm: max(0.5rem, 2vw);
-  --space-md: max(1rem, 3vw);
-  --space-lg: max(1.5rem, 4vw);
-  --space-xl: max(2rem, 5vw);
-  --space-2xl: max(3rem, 6vw);
-  --space-3xl: max(4rem, 8vw);
-  
-  /* Border radius */
+  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+  --font-size-3xl: clamp(1.875rem, 1.6rem + 1.375vw, 2.25rem);
+  --font-size-4xl: clamp(2.25rem, 1.9rem + 1.75vw, 3rem);
+
+  /* Spacing Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* Border Radius */
   --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
   --radius-full: 9999px;
-  
+
   /* Shadows */
-  --shadow-sm: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 1rem 2rem rgba(0, 0, 0, 0.2);
-  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
   /* Transitions */
-  --transition-fast: 150ms ease-in-out;
-  --transition-medium: 250ms ease-in-out;
-  --transition-slow: 350ms ease-in-out;
-  
-  /* Z-index layers */
-  --z-base: 1;
-  --z-dropdown: 100;
-  --z-sticky: 500;
-  --z-header: 1000;
-  --z-overlay: 2000;
-  --z-modal: 3000;
-  --z-toast: 4000;
-  
-  /* Container widths */
-  --container-sm: 40rem;
-  --container-md: 48rem;
-  --container-lg: 64rem;
-  --container-xl: 75rem;
-  --container-2xl: 90rem;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Container Widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+
+  /* Z-index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
 }
 
-/* Dark mode color scheme */
+/* Dark Mode Color Adjustments */
 @media (prefers-color-scheme: dark) {
   :root {
-    --header-bg-color: hsl(217 19% 15%);
-    --header-text-color: hsl(0 0% 95%);
-    
-    --color-primary: hsl(217 91% 70%);
-    --color-primary-dark: hsl(217 91% 50%);
-    --color-primary-light: hsl(217 19% 20%);
-    
-    --color-text: hsl(0 0% 95%);
-    --color-text-light: hsl(0 0% 75%);
-    --color-background: hsl(217 19% 12%);
-    --color-surface: hsl(217 19% 15%);
-    --color-border: hsl(217 19% 25%);
-    
-    --shadow-sm: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 1rem 2rem rgba(0, 0, 0, 0.6);
-  }
-}
+    --color-background-primary: hsl(0, 0%, 10%);
+    --color-background-secondary: hsl(0, 0%, 15%);
+    --color-text-primary: hsl(0, 0%, 95%);
+    --color-text-secondary: hsl(0, 0%, 70%);
+    --color-border: hsl(0, 0%, 25%);
 
-/* High contrast mode adjustments */
-@media (prefers-contrast: high) {
-  :root {
-    --color-border: currentColor;
-    --shadow-sm: none;
-    --shadow-md: 0 0 0 0.125rem currentColor;
-    --shadow-lg: 0 0 0 0.1875rem currentColor;
+    --section-bg-light: hsl(0, 0%, 10%);
+    --section-bg-gray: hsl(0, 0%, 15%);
+    --section-bg-dark: hsl(217, 91%, 15%);
   }
 }
 
 /* ============================================================================
-   CSS Reset and Base Styles
+   Component Style Imports
    ========================================================================= */
 
+/* Header Component */
+@import './components/header.css';
+
+/* Hero Section */
+@import './components/hero.css';
+
+/* Services Section */
+@import './components/services.css';
+
+/* About Section */
+@import './components/about.css';
+
+/* Benefits Section */
+@import './components/benefits.css';
+
+/* Button Components */
+@import './components/buttons.css';
+
+/* ============================================================================
+   Global Reset and Base Styles
+   ========================================================================= */
+
+/**
+ * Box sizing reset
+ * Ensures consistent box model across all elements
+ */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/**
+ * Remove default margins and paddings
+ */
+* {
   margin: 0;
   padding: 0;
 }
 
+/**
+ * HTML and Body base styles
+ */
 html {
+  /* Smooth scrolling for anchor navigation */
+  scroll-behavior: smooth;
+  
+  /* Prevent font size adjustments on orientation change */
   -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  
+  /* Enable font smoothing */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
-body {
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
-  color: var(--color-text);
-  background-color: var(--color-background);
-  min-block-size: 100vh;
-  min-block-size: 100dvh;
-}
-
-/* ============================================================================
-   Typography
-   ========================================================================= */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-family-heading);
-  font-weight: 700;
-  line-height: var(--line-height-tight);
-  color: var(--color-text);
-  margin-block-end: 0.5em;
-}
-
-h1 {
-  font-size: var(--font-size-3xl);
-}
-
-h2 {
-  font-size: var(--font-size-2xl);
-}
-
-h3 {
-  font-size: var(--font-size-xl);
-}
-
-h4 {
-  font-size: var(--font-size-lg);
-}
-
-h5 {
-  font-size: var(--font-size-base);
-}
-
-h6 {
-  font-size: var(--font-size-sm);
-}
-
-p {
-  margin-block-end: 1em;
-}
-
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--color-primary-dark);
-  text-decoration: underline;
-}
-
-a:focus-visible {
-  outline: 0.125rem solid var(--color-primary);
-  outline-offset: 0.125rem;
-  border-radius: var(--radius-sm);
-}
-
-/* ============================================================================
-   Utility Classes
-   ========================================================================= */
-
-.container {
-  inline-size: 100%;
-  max-inline-size: var(--container-xl);
-  margin-inline: auto;
-  padding-inline: var(--space-md);
-}
-
-.sr-only {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  padding: 0;
-  margin: -0.0625rem;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* ============================================================================
-   Accessibility
-   ========================================================================= */
-
+/**
+ * Disable smooth scrolling for users who prefer reduced motion
+ */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
   *,
   *::before,
   *::after {
@@ -254,10 +215,344 @@ a:focus-visible {
   }
 }
 
-/* Focus visible for keyboard navigation */
+body {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/**
+ * Improve text rendering
+ */
+body {
+  text-rendering: optimizeSpeed;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* ============================================================================
+   Typography Base Styles
+   ========================================================================= */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--color-primary-600);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--color-primary-700);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================================
+   Section Utilities
+   ========================================================================= */
+
+/**
+ * Standard section spacing
+ * Provides consistent vertical rhythm across sections
+ */
+.section {
+  padding-block: var(--space-3xl);
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding-block: var(--space-4xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding-block: clamp(4rem, 6vw, 8rem);
+  }
+}
+
+/**
+ * Section spacing variants
+ */
+.section--sm {
+  padding-block: var(--space-2xl);
+}
+
+@media (min-width: 768px) {
+  .section--sm {
+    padding-block: var(--space-3xl);
+  }
+}
+
+.section--lg {
+  padding-block: var(--space-4xl);
+}
+
+@media (min-width: 768px) {
+  .section--lg {
+    padding-block: clamp(5rem, 8vw, 10rem);
+  }
+}
+
+/**
+ * Section background variants
+ */
+.section--light {
+  background-color: var(--section-bg-light);
+}
+
+.section--gray {
+  background-color: var(--section-bg-gray);
+}
+
+.section--dark {
+  background-color: var(--section-bg-dark);
+  color: var(--color-primary-50);
+}
+
+.section--dark h1,
+.section--dark h2,
+.section--dark h3,
+.section--dark h4,
+.section--dark h5,
+.section--dark h6 {
+  color: var(--color-primary-50);
+}
+
+/* ============================================================================
+   Container Utilities
+   ========================================================================= */
+
+/**
+ * Responsive container with max-width constraints
+ */
+.container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--space-md);
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: var(--container-sm);
+    padding-inline: var(--space-lg);
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: var(--container-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: var(--container-lg);
+    padding-inline: var(--space-xl);
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: var(--container-xl);
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: var(--container-2xl);
+  }
+}
+
+/**
+ * Container width variants
+ */
+.container--sm {
+  max-width: var(--container-sm);
+}
+
+.container--md {
+  max-width: var(--container-md);
+}
+
+.container--lg {
+  max-width: var(--container-lg);
+}
+
+.container--xl {
+  max-width: var(--container-xl);
+}
+
+.container--full {
+  max-width: none;
+}
+
+/* ============================================================================
+   Utility Classes
+   ========================================================================= */
+
+/**
+ * Screen reader only content
+ * Visually hidden but accessible to screen readers
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/**
+ * Skip to main content link
+ * Improves keyboard navigation accessibility
+ */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary-600);
+  color: white;
+  padding: var(--space-sm) var(--space-md);
+  text-decoration: none;
+  z-index: var(--z-tooltip);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: var(--space-sm);
+  left: var(--space-sm);
+}
+
+/**
+ * Text alignment utilities
+ */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/**
+ * Display utilities
+ */
+.hidden {
+  display: none !important;
+}
+
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.grid {
+  display: grid;
+}
+
+/**
+ * Spacing utilities
+ */
+.mt-0 { margin-block-start: 0; }
+.mt-1 { margin-block-start: var(--space-xs); }
+.mt-2 { margin-block-start: var(--space-sm); }
+.mt-3 { margin-block-start: var(--space-md); }
+.mt-4 { margin-block-start: var(--space-lg); }
+.mt-5 { margin-block-start: var(--space-xl); }
+.mt-6 { margin-block-start: var(--space-2xl); }
+
+.mb-0 { margin-block-end: 0; }
+.mb-1 { margin-block-end: var(--space-xs); }
+.mb-2 { margin-block-end: var(--space-sm); }
+.mb-3 { margin-block-end: var(--space-md); }
+.mb-4 { margin-block-end: var(--space-lg); }
+.mb-5 { margin-block-end: var(--space-xl); }
+.mb-6 { margin-block-end: var(--space-2xl); }
+
+/* ============================================================================
+   Image and Media Utilities
+   ========================================================================= */
+
+/**
+ * Responsive images
+ */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/**
+ * Lazy loading placeholder
+ */
+img[loading="lazy"] {
+  background-color: var(--color-gray-200);
+}
+
+@media (prefers-color-scheme: dark) {
+  img[loading="lazy"] {
+    background-color: var(--color-gray-700);
+  }
+}
+
+/* ============================================================================
+   Focus Visible Polyfill
+   ========================================================================= */
+
+/**
+ * Enhanced focus styles for keyboard navigation
+ */
 :focus-visible {
-  outline: 0.125rem solid var(--color-primary);
-  outline-offset: 0.125rem;
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
 }
 
 /* ============================================================================
@@ -284,16 +579,10 @@ a:focus-visible {
   }
 
   img {
-    max-inline-size: 100%;
     page-break-inside: avoid;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     page-break-after: avoid;
   }
 
@@ -302,7 +591,32 @@ a:focus-visible {
     widows: 3;
   }
 
-  @page {
-    margin: 2cm;
+  .section {
+    page-break-inside: avoid;
+  }
+
+  .skip-link,
+  .sr-only {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   High Contrast Mode Support
+   ========================================================================= */
+
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary-600: hsl(217, 100%, 50%);
+    --color-border: currentColor;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  button,
+  .btn {
+    border-width: 2px;
   }
 }
