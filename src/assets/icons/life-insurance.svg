@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="lifeInsuranceTitle lifeInsuranceDesc" role="img">
+  <title id="lifeInsuranceTitle">Life Insurance</title>
+  <desc id="lifeInsuranceDesc">Icon representing life insurance with a heart and protective shield symbol</desc>
+  <path d="M32 12c-8 0-14 4-14 10 0 8 14 22 14 22s14-14 14-22c0-6-6-10-14-10z" fill="currentColor" opacity="0.1"/>
+  <path d="M32 12c-8 0-14 4-14 10 0 8 14 22 14 22s14-14 14-22c0-6-6-10-14-10z"/>
+  <path d="M32 50v8m-8-4h16" stroke-width="2.5"/>
+  <circle cx="32" cy="58" r="2" fill="currentColor"/>
+</svg>
