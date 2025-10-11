@@ -1,45 +1,54 @@
-# My Insure Page 27
+## Contact Form
 
-Professional insurance company landing page built with modern static site generation tooling. This project uses Vite for fast development and optimized production builds, with comprehensive code quality gates and CI/CD integration.
+The contact form provides a user-friendly interface for visitors to submit inquiries with comprehensive validation and accessibility features.
 
-## Table of Contents
+### Features
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Development Workflow](#development-workflow)
-- [Build Process](#build-process)
-- [Deployment](#deployment)
-- [Project Structure](#project-structure)
-- [Code Quality](#code-quality)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
+- **Real-time Validation**: Instant feedback as users fill out the form
+- **Client-side Validation**: No page reload required for validation
+- **Accessibility**: WCAG 2.1 AA compliant with ARIA attributes
+- **Responsive Design**: Adapts to mobile, tablet, and desktop screens
+- **Success Feedback**: Clear confirmation message on successful submission
+- **Error Handling**: Detailed error messages for invalid inputs
 
-## Overview
+### Form Fields
 
-This project provides a static landing page for an insurance company, built with:
+| Field | Type | Validation Rules |
+|-------|------|------------------|
+| Name | Text | Required, 2-100 characters |
+| Email | Email | Required, valid email format |
+| Phone | Tel | Required, valid phone format (US/International) |
+| Insurance Type | Select | Required, one of: Auto, Home, Life, Health, Business |
+| Message | Textarea | Required, 10-1000 characters |
 
-- **Vanilla HTML/CSS/JavaScript**: No framework overhead, pure web standards
-- **Vite**: Lightning-fast development server and optimized production builds
-- **ESLint**: Code quality enforcement with flat config format
-- **Prettier**: Consistent code formatting across the codebase
-- **GitHub Actions**: Automated CI pipeline for build validation
+### Validation Rules
 
-### Key Features
+#### Email Validation
+- Format: `user@domain.com`
+- Regex pattern: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
+- Examples:
+  - ✅ Valid: `john.doe@example.com`, `user+tag@domain.co.uk`
+  - ❌ Invalid: `invalid@`, `@domain.com`, `user@domain`
 
-- Zero-config development environment
-- Hot module replacement (HMR) for instant feedback
-- Optimized asset bundling and minification
-- Modern CSS with automatic vendor prefixing
-- Progressive enhancement with vanilla JavaScript
-- Comprehensive linting and formatting rules
+#### Phone Validation
+- Accepts multiple formats:
+  - US: `(555) 123-4567`, `555-123-4567`, `5551234567`
+  - International: `+1-555-123-4567`, `+44 20 1234 5678`
+- Regex pattern: `/^[\d\s\-\+\(\)]+$/`
+- Minimum 10 digits required
 
-## Prerequisites
+#### Name Validation
+- Minimum 2 characters
+- Maximum 100 characters
+- Allows letters, spaces, hyphens, and apostrophes
 
-Before you begin, ensure you have the following installed:
+#### Message Validation
+- Minimum 10 characters
+- Maximum 1000 characters
+- Prevents empty or whitespace-only submissions
 
-- **Node.js**: >= 18.0.0 (LTS recommended)
-- **npm**: >= 9.0.0 (comes with Node.js)
-- **Git**: For version control
+### Usage
 
-### Verify Prerequisites
+The contact form is accessible at `http://localhost:5173#contact` and automatically initializes on page load.
+
+#### Accessing the Form
