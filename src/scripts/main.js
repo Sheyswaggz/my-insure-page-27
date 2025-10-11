@@ -1,12 +1,12 @@
 /**
  * Main JavaScript Entry Point
- * 
+ *
  * Initializes all interactive components and utilities for the insurance landing page.
  * Handles header navigation, lazy loading of images, contact form, and performance monitoring.
- * 
+ *
  * @module main
  * @version 1.0.0
- * 
+ *
  * @generated-from: task-id:TASK-003, task-id:d2b87a04-ff1d-4e18-b0de-51e86102b9a1
  * @modifies: DOM initialization and component setup
  * @dependencies: ["header", "lazyload", "contact-form"]
@@ -22,8 +22,8 @@ import { initContactForm } from './components/contact-form.js';
  */
 const logger = {
   info: (message, context = {}) => {
-    if (typeof console !== 'undefined' && console.info) {
-      console.info(`[Main] ${message}`, context);
+    if (typeof console !== 'undefined' && console.log) {
+      console.log(`[Main] ${message}`, context);
     }
   },
   warn: (message, context = {}) => {
@@ -41,7 +41,7 @@ const logger = {
 /**
  * Initialize all application components
  * Sets up header navigation, lazy loading functionality, and contact form
- * 
+ *
  * @returns {void}
  */
 function initializeApp() {
