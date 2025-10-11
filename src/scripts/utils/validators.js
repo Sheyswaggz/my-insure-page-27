@@ -371,7 +371,7 @@ export function validateLength(value, options = {}) {
  * // }
  */
 export function validateAll(validations) {
-  if (!validations || typeof validations !== 'object') {
+  if (!validations || typeof validations !== 'object' || Array.isArray(validations)) {
     throw new Error('validations must be an object');
   }
 
