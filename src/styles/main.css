@@ -3,21 +3,16 @@
 /**
  * Main Stylesheet
  * 
- * Central stylesheet that imports all component styles and defines global utilities.
- * Implements CSS custom properties for theming, smooth scrolling behavior, and
- * responsive section spacing utilities.
+ * Central import hub for all component styles and global utilities.
+ * Implements CSS custom properties for theming, smooth scrolling behavior,
+ * and responsive section spacing utilities.
  * 
  * Architecture:
- * - CSS custom properties for design tokens
- * - Component style imports
- * - Global utility classes
- * - Smooth scroll behavior
- * - Section spacing system
- * 
- * Performance:
- * - Minimal global styles to reduce specificity conflicts
- * - Component-based architecture for better code splitting
- * - CSS containment where applicable
+ * - CSS Custom Properties (Design Tokens)
+ * - Global Resets and Base Styles
+ * - Component Style Imports
+ * - Utility Classes
+ * - Responsive Breakpoints
  */
 
 /* ============================================================================
@@ -32,65 +27,71 @@
   --color-primary-300: hsl(217, 91%, 75%);
   --color-primary-400: hsl(217, 91%, 65%);
   --color-primary-500: hsl(217, 91%, 60%);
-  --color-primary-600: hsl(217, 91%, 55%);
-  --color-primary-700: hsl(217, 91%, 45%);
-  --color-primary-800: hsl(217, 91%, 35%);
+  --color-primary-600: hsl(217, 91%, 50%);
+  --color-primary-700: hsl(217, 91%, 40%);
+  --color-primary-800: hsl(217, 91%, 30%);
   --color-primary-900: hsl(217, 91%, 20%);
 
-  /* Color Palette - Grayscale */
-  --color-gray-50: hsl(0, 0%, 98%);
-  --color-gray-100: hsl(0, 0%, 95%);
-  --color-gray-200: hsl(0, 0%, 90%);
-  --color-gray-300: hsl(0, 0%, 80%);
-  --color-gray-400: hsl(0, 0%, 70%);
-  --color-gray-500: hsl(0, 0%, 60%);
-  --color-gray-600: hsl(0, 0%, 50%);
-  --color-gray-700: hsl(0, 0%, 40%);
-  --color-gray-750: hsl(0, 0%, 30%);
-  --color-gray-800: hsl(0, 0%, 20%);
-  --color-gray-900: hsl(0, 0%, 10%);
+  /* Color Palette - Neutral */
+  --color-gray-50: hsl(210, 20%, 98%);
+  --color-gray-100: hsl(210, 20%, 95%);
+  --color-gray-200: hsl(210, 20%, 90%);
+  --color-gray-300: hsl(210, 20%, 80%);
+  --color-gray-400: hsl(210, 20%, 65%);
+  --color-gray-500: hsl(210, 20%, 50%);
+  --color-gray-600: hsl(210, 20%, 40%);
+  --color-gray-700: hsl(210, 20%, 30%);
+  --color-gray-800: hsl(210, 20%, 20%);
+  --color-gray-900: hsl(210, 20%, 15%);
 
   /* Semantic Colors */
   --color-background-primary: hsl(0, 0%, 100%);
-  --color-background-secondary: hsl(0, 0%, 98%);
-  --color-text-primary: hsl(0, 0%, 10%);
-  --color-text-secondary: hsl(0, 0%, 40%);
-  --color-border: hsl(0, 0%, 90%);
+  --color-background-secondary: hsl(210, 20%, 98%);
+  --color-text-primary: hsl(210, 20%, 15%);
+  --color-text-secondary: hsl(210, 15%, 35%);
+  --color-border: hsl(210, 20%, 85%);
 
   /* Section Backgrounds */
   --section-bg-light: hsl(0, 0%, 100%);
-  --section-bg-gray: hsl(0, 0%, 98%);
+  --section-bg-gray: hsl(210, 20%, 98%);
   --section-bg-dark: hsl(217, 91%, 20%);
 
-  /* Typography Scale */
-  --font-family-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-family-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Spacing Scale */
+  --space-xs: clamp(0.25rem, 0.5vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 1vw, 0.75rem);
+  --space-md: clamp(1rem, 2vw, 1.5rem);
+  --space-lg: clamp(1.5rem, 3vw, 2rem);
+  --space-xl: clamp(2rem, 4vw, 3rem);
+  --space-2xl: clamp(3rem, 6vw, 4rem);
+  --space-3xl: clamp(4rem, 8vw, 6rem);
 
+  /* Typography Scale */
   --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
   --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
   --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-  --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.375rem);
   --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
-  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
-  --font-size-3xl: clamp(1.875rem, 1.6rem + 1.375vw, 2.25rem);
-  --font-size-4xl: clamp(2.25rem, 1.9rem + 1.75vw, 3rem);
+  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --font-size-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem);
+  --font-size-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 3rem);
 
-  /* Spacing Scale */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 3rem;
-  --space-3xl: 4rem;
-  --space-4xl: 6rem;
+  /* Font Families */
+  --font-family-heading: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  --font-family-body: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+
+  /* Container Widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
 
   /* Border Radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
   --radius-full: 9999px;
 
   /* Shadows */
@@ -100,18 +101,11 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 200ms ease-in-out;
+  --transition-slow: 300ms ease-in-out;
 
-  /* Container Widths */
-  --container-sm: 640px;
-  --container-md: 768px;
-  --container-lg: 1024px;
-  --container-xl: 1280px;
-  --container-2xl: 1536px;
-
-  /* Z-index Scale */
+  /* Z-Index Scale */
   --z-dropdown: 1000;
   --z-sticky: 1020;
   --z-fixed: 1030;
@@ -121,19 +115,146 @@
   --z-tooltip: 1070;
 }
 
-/* Dark Mode Color Adjustments */
+/* Dark Mode Color Overrides */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background-primary: hsl(0, 0%, 10%);
-    --color-background-secondary: hsl(0, 0%, 15%);
-    --color-text-primary: hsl(0, 0%, 95%);
-    --color-text-secondary: hsl(0, 0%, 70%);
-    --color-border: hsl(0, 0%, 25%);
+    --color-background-primary: hsl(210, 20%, 12%);
+    --color-background-secondary: hsl(210, 20%, 16%);
+    --color-text-primary: hsl(210, 20%, 95%);
+    --color-text-secondary: hsl(210, 15%, 75%);
+    --color-border: hsl(210, 20%, 25%);
 
-    --section-bg-light: hsl(0, 0%, 10%);
-    --section-bg-gray: hsl(0, 0%, 15%);
+    --section-bg-light: hsl(210, 20%, 12%);
+    --section-bg-gray: hsl(210, 20%, 16%);
     --section-bg-dark: hsl(217, 91%, 15%);
   }
+}
+
+/* ============================================================================
+   Global Resets and Base Styles
+   ========================================================================= */
+
+/**
+ * Box sizing reset
+ * Ensures consistent box model across all elements
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/**
+ * Root element configuration
+ * Sets up smooth scrolling and base font size
+ */
+html {
+  /* Smooth scrolling for anchor navigation */
+  scroll-behavior: smooth;
+  
+  /* Prevent font size inflation on mobile */
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  
+  /* Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/**
+ * Disable smooth scrolling for users who prefer reduced motion
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/**
+ * Body base styles
+ */
+body {
+  min-height: 100vh;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-primary);
+  overflow-x: hidden;
+}
+
+/**
+ * Heading defaults
+ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+/**
+ * Link defaults
+ */
+a {
+  color: var(--color-primary-500);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--color-primary-600);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/**
+ * Image defaults
+ */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/**
+ * Form element defaults
+ */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/**
+ * Remove default button styles
+ */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 /* ============================================================================
@@ -158,168 +279,34 @@
 /* Button Components */
 @import './components/buttons.css';
 
+/* Contact Form Component */
+@import './components/contact-form.css';
+
+/* Footer Component */
+@import './components/footer.css';
+
 /* ============================================================================
-   Global Reset and Base Styles
+   Section Spacing Utilities
    ========================================================================= */
 
 /**
- * Box sizing reset
- * Ensures consistent box model across all elements
- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-/**
- * Remove default margins and paddings
- */
-* {
-  margin: 0;
-  padding: 0;
-}
-
-/**
- * HTML and Body base styles
- */
-html {
-  /* Smooth scrolling for anchor navigation */
-  scroll-behavior: smooth;
-  
-  /* Prevent font size adjustments on orientation change */
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  
-  /* Enable font smoothing */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/**
- * Disable smooth scrolling for users who prefer reduced motion
- */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-body {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-base);
-  line-height: 1.6;
-  color: var(--color-text-primary);
-  background-color: var(--color-background-primary);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/**
- * Improve text rendering
- */
-body {
-  text-rendering: optimizeSpeed;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  body {
-    text-rendering: optimizeLegibility;
-  }
-}
-
-/* ============================================================================
-   Typography Base Styles
-   ========================================================================= */
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-family-heading);
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-text-primary);
-  text-wrap: balance;
-}
-
-p {
-  text-wrap: pretty;
-}
-
-a {
-  color: var(--color-primary-600);
-  text-decoration: none;
-  transition: color var(--transition-base);
-}
-
-a:hover {
-  color: var(--color-primary-700);
-}
-
-a:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* ============================================================================
-   Section Utilities
-   ========================================================================= */
-
-/**
- * Standard section spacing
- * Provides consistent vertical rhythm across sections
+ * Standard section padding
+ * Provides consistent vertical spacing across sections
  */
 .section {
   padding-block: var(--space-3xl);
+  padding-inline: var(--space-md);
 }
 
-@media (min-width: 768px) {
-  .section {
-    padding-block: var(--space-4xl);
-  }
-}
-
-@media (min-width: 1024px) {
-  .section {
-    padding-block: clamp(4rem, 6vw, 8rem);
-  }
-}
-
-/**
- * Section spacing variants
- */
-.section--sm {
+.section--compact {
   padding-block: var(--space-2xl);
 }
 
-@media (min-width: 768px) {
-  .section--sm {
-    padding-block: var(--space-3xl);
-  }
+.section--spacious {
+  padding-block: clamp(5rem, 10vw, 8rem);
 }
 
-.section--lg {
-  padding-block: var(--space-4xl);
-}
-
-@media (min-width: 768px) {
-  .section--lg {
-    padding-block: clamp(5rem, 8vw, 10rem);
-  }
-}
-
-/**
- * Section background variants
- */
+/* Section background variants */
 .section--light {
   background-color: var(--section-bg-light);
 }
@@ -355,41 +342,6 @@ a:focus-visible {
   padding-inline: var(--space-md);
 }
 
-@media (min-width: 640px) {
-  .container {
-    max-width: var(--container-sm);
-    padding-inline: var(--space-lg);
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    max-width: var(--container-md);
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    max-width: var(--container-lg);
-    padding-inline: var(--space-xl);
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: var(--container-xl);
-  }
-}
-
-@media (min-width: 1536px) {
-  .container {
-    max-width: var(--container-2xl);
-  }
-}
-
-/**
- * Container width variants
- */
 .container--sm {
   max-width: var(--container-sm);
 }
@@ -406,12 +358,84 @@ a:focus-visible {
   max-width: var(--container-xl);
 }
 
+.container--2xl {
+  max-width: var(--container-2xl);
+}
+
 .container--full {
-  max-width: none;
+  max-width: 100%;
+  padding-inline: 0;
+}
+
+/* Fluid container with percentage-based max-width */
+.container--fluid {
+  max-width: min(90%, var(--container-xl));
 }
 
 /* ============================================================================
-   Utility Classes
+   Typography Utilities
+   ========================================================================= */
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* ============================================================================
+   Spacing Utilities
+   ========================================================================= */
+
+/* Margin utilities */
+.mt-xs { margin-block-start: var(--space-xs); }
+.mt-sm { margin-block-start: var(--space-sm); }
+.mt-md { margin-block-start: var(--space-md); }
+.mt-lg { margin-block-start: var(--space-lg); }
+.mt-xl { margin-block-start: var(--space-xl); }
+.mt-2xl { margin-block-start: var(--space-2xl); }
+.mt-3xl { margin-block-start: var(--space-3xl); }
+
+.mb-xs { margin-block-end: var(--space-xs); }
+.mb-sm { margin-block-end: var(--space-sm); }
+.mb-md { margin-block-end: var(--space-md); }
+.mb-lg { margin-block-end: var(--space-lg); }
+.mb-xl { margin-block-end: var(--space-xl); }
+.mb-2xl { margin-block-end: var(--space-2xl); }
+.mb-3xl { margin-block-end: var(--space-3xl); }
+
+/* Padding utilities */
+.pt-xs { padding-block-start: var(--space-xs); }
+.pt-sm { padding-block-start: var(--space-sm); }
+.pt-md { padding-block-start: var(--space-md); }
+.pt-lg { padding-block-start: var(--space-lg); }
+.pt-xl { padding-block-start: var(--space-xl); }
+.pt-2xl { padding-block-start: var(--space-2xl); }
+.pt-3xl { padding-block-start: var(--space-3xl); }
+
+.pb-xs { padding-block-end: var(--space-xs); }
+.pb-sm { padding-block-end: var(--space-sm); }
+.pb-md { padding-block-end: var(--space-md); }
+.pb-lg { padding-block-end: var(--space-lg); }
+.pb-xl { padding-block-end: var(--space-xl); }
+.pb-2xl { padding-block-end: var(--space-2xl); }
+.pb-3xl { padding-block-end: var(--space-3xl); }
+
+/* ============================================================================
+   Accessibility Utilities
    ========================================================================= */
 
 /**
@@ -432,13 +456,13 @@ a:focus-visible {
 
 /**
  * Skip to main content link
- * Improves keyboard navigation accessibility
+ * Visible only when focused for keyboard navigation
  */
 .skip-link {
   position: absolute;
   top: -40px;
   left: 0;
-  background: var(--color-primary-600);
+  background: var(--color-primary-500);
   color: white;
   padding: var(--space-sm) var(--space-md);
   text-decoration: none;
@@ -452,107 +476,42 @@ a:focus-visible {
   left: var(--space-sm);
 }
 
-/**
- * Text alignment utilities
- */
-.text-center {
-  text-align: center;
-}
-
-.text-left {
-  text-align: left;
-}
-
-.text-right {
-  text-align: right;
-}
-
-/**
- * Display utilities
- */
-.hidden {
-  display: none !important;
-}
-
-.block {
-  display: block;
-}
-
-.inline-block {
-  display: inline-block;
-}
-
-.flex {
-  display: flex;
-}
-
-.inline-flex {
-  display: inline-flex;
-}
-
-.grid {
-  display: grid;
-}
-
-/**
- * Spacing utilities
- */
-.mt-0 { margin-block-start: 0; }
-.mt-1 { margin-block-start: var(--space-xs); }
-.mt-2 { margin-block-start: var(--space-sm); }
-.mt-3 { margin-block-start: var(--space-md); }
-.mt-4 { margin-block-start: var(--space-lg); }
-.mt-5 { margin-block-start: var(--space-xl); }
-.mt-6 { margin-block-start: var(--space-2xl); }
-
-.mb-0 { margin-block-end: 0; }
-.mb-1 { margin-block-end: var(--space-xs); }
-.mb-2 { margin-block-end: var(--space-sm); }
-.mb-3 { margin-block-end: var(--space-md); }
-.mb-4 { margin-block-end: var(--space-lg); }
-.mb-5 { margin-block-end: var(--space-xl); }
-.mb-6 { margin-block-end: var(--space-2xl); }
-
 /* ============================================================================
-   Image and Media Utilities
+   Responsive Breakpoints
    ========================================================================= */
 
-/**
- * Responsive images
- */
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
+/* Mobile: 320px - 639px (default, mobile-first) */
 
-/**
- * Lazy loading placeholder
- */
-img[loading="lazy"] {
-  background-color: var(--color-gray-200);
-}
-
-@media (prefers-color-scheme: dark) {
-  img[loading="lazy"] {
-    background-color: var(--color-gray-700);
+/* Small tablets: 640px and up */
+@media (min-width: 640px) {
+  .section {
+    padding-inline: var(--space-lg);
   }
 }
 
-/* ============================================================================
-   Focus Visible Polyfill
-   ========================================================================= */
+/* Tablets: 768px and up */
+@media (min-width: 768px) {
+  .section {
+    padding-block: clamp(4rem, 8vw, 6rem);
+  }
+  
+  .container {
+    padding-inline: var(--space-lg);
+  }
+}
 
-/**
- * Enhanced focus styles for keyboard navigation
- */
-:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
+/* Desktop: 1024px and up */
+@media (min-width: 1024px) {
+  .section {
+    padding-block: var(--space-3xl);
+  }
+}
+
+/* Large desktop: 1280px and up */
+@media (min-width: 1280px) {
+  .section--spacious {
+    padding-block: clamp(6rem, 12vw, 10rem);
+  }
 }
 
 /* ============================================================================
@@ -560,44 +519,30 @@ img[loading="lazy"] {
    ========================================================================= */
 
 @media print {
-  *,
-  *::before,
-  *::after {
-    background: transparent !important;
-    color: black !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
+  html {
+    scroll-behavior: auto;
   }
-
-  a,
-  a:visited {
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .section {
+    padding-block: 1rem;
+    page-break-inside: avoid;
+  }
+  
+  .skip-link {
+    display: none;
+  }
+  
+  a {
     text-decoration: underline;
   }
-
-  a[href^="http"]::after {
+  
+  a[href^="http"]:after {
     content: " (" attr(href) ")";
-  }
-
-  img {
-    page-break-inside: avoid;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    page-break-after: avoid;
-  }
-
-  p {
-    orphans: 3;
-    widows: 3;
-  }
-
-  .section {
-    page-break-inside: avoid;
-  }
-
-  .skip-link,
-  .sr-only {
-    display: none;
   }
 }
 
@@ -607,16 +552,15 @@ img[loading="lazy"] {
 
 @media (prefers-contrast: high) {
   :root {
-    --color-primary-600: hsl(217, 100%, 50%);
-    --color-border: currentColor;
+    --color-primary-500: hsl(217, 100%, 50%);
+    --color-text-primary: hsl(0, 0%, 0%);
+    --color-text-secondary: hsl(0, 0%, 20%);
   }
-
-  a {
-    text-decoration: underline;
-  }
-
-  button,
-  .btn {
-    border-width: 2px;
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-text-primary: hsl(0, 0%, 100%);
+      --color-text-secondary: hsl(0, 0%, 90%);
+    }
   }
 }
