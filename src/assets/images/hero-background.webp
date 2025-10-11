@@ -1,0 +1,128 @@
+#!/usr/bin/env node
+
+/**
+ * Generate Hero Background WebP
+ * 
+ * Converts hero-background.jpg to optimized WebP format
+ * Target: < 100KB, quality 85, 1920x1080
+ */
+
+import sharp from 'sharp';
+import { existsSync, statSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const CONFIG = {
+  sourceFile: join(__dirname, '../src/assets/images/hero-background.jpg'),
+  outputFile: join(__dirname, '../src/assets/images/hero-background.webp'),
+  targetWidth: 1920,
+  targetHeight: 1080,
+  maxSize: 100 * 1024, // 100KB
+  initialQuality: 85,
+  minQuality: 60,
+};
+
+const logger = {
+  info: (msg, data = {}) => console.log(`[INFO] ${msg}`, data),
+  error: (msg, err) => console.error(`[ERROR] ${msg}`, err?.message || err),
+  success: (msg, data = {}) => console.log(`[SUCCESS] ✓ ${msg}`, data),
+  warn: (msg, data = {}) => console.warn(`[WARN] ${msg}`, data),
+};
+
+async function generateWebP() {
+  try {
+    logger.info('Starting WebP generation', {
+      source: CONFIG.sourceFile,
+      output: CONFIG.outputFile,
+    });
+
+    /* Validate source file exists */
+    if (!existsSync(CONFIG.sourceFile)) {
+      throw new Error(`Source file not found: ${CONFIG.sourceFile}`);
+    }
+
+    const sourceStats = statSync(CONFIG.sourceFile);
+    logger.info('Source file found', {
+      size: `${(sourceStats.size / 1024).toFixed(2)}KB`,
+    });
+
+    /* Load source image */
+    const image = sharp(CONFIG.sourceFile);
+    const metadata = await image.metadata();
+
+    logger.info('Source metadata', {
+      width: metadata.width,
+      height: metadata.height,
+      format: metadata.format,
+    });
+
+    /* Optimize with iterative quality reduction */
+    let quality = CONFIG.initialQuality;
+    let attempt = 0;
+    const maxAttempts = 10;
+
+    while (attempt < maxAttempts) {
+      attempt++;
+
+      /* Generate WebP */
+      await sharp(CONFIG.sourceFile)
+        .resize(CONFIG.targetWidth, CONFIG.targetHeight, {
+          fit: 'cover',
+          position: 'center',
+          withoutEnlargement: false,
+        })
+        .webp({
+          quality,
+          effort: 6,
+          smartSubsample: true,
+        })
+        .toFile(CONFIG.outputFile);
+
+      /* Check file size */
+      const outputStats = statSync(CONFIG.outputFile);
+      const fileSize = outputStats.size;
+
+      logger.info(`Attempt ${attempt}`, {
+        quality,
+        size: `${(fileSize / 1024).toFixed(2)}KB`,
+        target: `${(CONFIG.maxSize / 1024).toFixed(2)}KB`,
+      });
+
+      /* Success if under target */
+      if (fileSize <= CONFIG.maxSize) {
+        logger.success('WebP generated successfully', {
+          path: CONFIG.outputFile,
+          size: `${(fileSize / 1024).toFixed(2)}KB`,
+          quality,
+          dimensions: `${CONFIG.targetWidth}x${CONFIG.targetHeight}`,
+        });
+        return;
+      }
+
+      /* Reduce quality for next attempt */
+      quality -= 5;
+
+      if (quality < CONFIG.minQuality) {
+        logger.warn('Minimum quality reached', {
+          finalSize: `${(fileSize / 1024).toFixed(2)}KB`,
+          target: `${(CONFIG.maxSize / 1024).toFixed(2)}KB`,
+          quality: CONFIG.minQuality,
+        });
+        logger.warn('Consider using a different source image or accepting larger file size');
+        return;
+      }
+    }
+
+    logger.error('Max attempts reached', new Error('Could not meet size target'));
+
+  } catch (error) {
+    logger.error('WebP generation failed', error);
+    process.exit(1);
+  }
+}
+
+/* Execute */
+generateWebP();
