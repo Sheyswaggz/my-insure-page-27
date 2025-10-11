@@ -2,18 +2,19 @@
  * Main JavaScript Entry Point
  * 
  * Initializes all interactive components and utilities for the insurance landing page.
- * Handles header navigation, lazy loading, and performance monitoring.
+ * Handles header navigation, lazy loading of images, contact form, and performance monitoring.
  * 
  * @module main
  * @version 1.0.0
  * 
- * @generated-from: task-id:TASK-003
+ * @generated-from: task-id:TASK-003, task-id:d2b87a04-ff1d-4e18-b0de-51e86102b9a1
  * @modifies: DOM initialization and component setup
- * @dependencies: ["header", "lazyload"]
+ * @dependencies: ["header", "lazyload", "contact-form"]
  */
 
 import { initHeader } from './components/header.js';
 import { initLazyLoad } from './utils/lazyload.js';
+import { initContactForm } from './components/contact-form.js';
 
 /**
  * Logger utility for structured logging
@@ -39,13 +40,13 @@ const logger = {
 
 /**
  * Initialize all application components
- * Sets up header navigation, lazy loading, and performance monitoring
+ * Sets up header navigation, lazy loading functionality, and contact form
  * 
  * @returns {void}
  */
 function initializeApp() {
   try {
-    /* Performance mark for initialization start */
+    /* Mark initialization start */
     if (typeof performance !== 'undefined' && performance.mark) {
       performance.mark('app-init-start');
     }
@@ -54,71 +55,104 @@ function initializeApp() {
 
     /* Initialize header component */
     try {
+      if (typeof performance !== 'undefined' && performance.mark) {
+        performance.mark('header-init-start');
+      }
+
       initHeader();
+
+      if (typeof performance !== 'undefined' && performance.mark) {
+        performance.mark('header-init-end');
+        performance.measure('header-init-duration', 'header-init-start', 'header-init-end');
+      }
+
       logger.info('Header initialized successfully');
-    } catch (headerError) {
-      logger.error('Failed to initialize header', headerError);
+    } catch (error) {
+      logger.error('Failed to initialize header', error);
       /* Continue initialization even if header fails */
     }
 
-    /* Initialize lazy loading utility */
+    /* Initialize lazy loading for images */
     try {
-      const lazyLoadCleanup = initLazyLoad({
-        selector: '[data-src], [data-srcset]',
+      if (typeof performance !== 'undefined' && performance.mark) {
+        performance.mark('lazyload-init-start');
+      }
+
+      const lazyLoadCleanup = initLazyLoad('img[data-src], [data-src]', {
         rootMargin: '50px',
         threshold: 0.01,
         enableNativeLazy: true,
         retryAttempts: 3,
-        retryDelay: 1000,
       });
+
+      if (typeof performance !== 'undefined' && performance.mark) {
+        performance.mark('lazyload-init-end');
+        performance.measure('lazyload-init-duration', 'lazyload-init-start', 'lazyload-init-end');
+      }
 
       logger.info('Lazy loading initialized successfully');
 
-      /* Store cleanup function for potential future use */
-      if (typeof window !== 'undefined') {
-        window.__lazyLoadCleanup = lazyLoadCleanup;
-      }
-    } catch (lazyLoadError) {
-      logger.error('Failed to initialize lazy loading', lazyLoadError);
-      /* Continue initialization even if lazy loading fails */
+      /* Store cleanup function for potential later use */
+      window.__lazyLoadCleanup = lazyLoadCleanup;
+    } catch (error) {
+      logger.error('Failed to initialize lazy loading', error);
+      /* Continue even if lazy loading fails */
     }
 
-    /* Performance mark for initialization end */
+    /* Initialize contact form */
+    try {
+      if (typeof performance !== 'undefined' && performance.mark) {
+        performance.mark('contact-form-init-start');
+      }
+
+      const contactFormCleanup = initContactForm('#contact-form');
+
+      if (typeof performance !== 'undefined' && performance.mark) {
+        performance.mark('contact-form-init-end');
+        performance.measure('contact-form-init-duration', 'contact-form-init-start', 'contact-form-init-end');
+      }
+
+      logger.info('Contact form initialized successfully');
+
+      /* Store cleanup function for potential later use */
+      window.__contactFormCleanup = contactFormCleanup;
+    } catch (error) {
+      logger.error('Failed to initialize contact form', error);
+      /* Continue even if contact form fails */
+    }
+
+    /* Mark initialization complete */
     if (typeof performance !== 'undefined' && performance.mark) {
       performance.mark('app-init-end');
-      
+      performance.measure('app-init-duration', 'app-init-start', 'app-init-end');
+
+      /* Log performance metrics */
       try {
-        performance.measure('app-initialization', 'app-init-start', 'app-init-end');
-        
-        /* Log initialization time */
-        const measure = performance.getEntriesByName('app-initialization')[0];
-        if (measure) {
+        const initMeasure = performance.getEntriesByName('app-init-duration')[0];
+        if (initMeasure) {
           logger.info('Application initialization completed', {
-            duration: `${measure.duration.toFixed(2)}ms`,
+            duration: `${initMeasure.duration.toFixed(2)}ms`,
           });
         }
-      } catch (measureError) {
-        /* Ignore measure errors */
-        logger.info('Application initialization completed');
+      } catch (perfError) {
+        logger.warn('Could not retrieve performance metrics', { error: perfError });
       }
-    } else {
-      logger.info('Application initialization completed');
     }
 
+    logger.info('Application initialization completed successfully');
   } catch (error) {
     logger.error('Critical error during application initialization', error);
-    /* Rethrow to prevent silent failures */
-    throw error;
+    /* Application should still be partially functional */
   }
 }
 
 /**
- * DOMContentLoaded event handler
+ * DOM Content Loaded Event Handler
  * Ensures DOM is fully loaded before initializing components
  */
 if (typeof document !== 'undefined') {
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeApp, { once: true });
+    document.addEventListener('DOMContentLoaded', initializeApp);
   } else {
     /* DOM already loaded, initialize immediately */
     initializeApp();
@@ -126,6 +160,40 @@ if (typeof document !== 'undefined') {
 }
 
 /**
- * Export initialization function for testing purposes
+ * Cleanup on page unload
+ * Ensures proper cleanup of observers and event listeners
  */
-export { initializeApp };
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    logger.info('Page unloading, performing cleanup');
+
+    /* Call lazy load cleanup if available */
+    if (typeof window.__lazyLoadCleanup === 'function') {
+      try {
+        window.__lazyLoadCleanup();
+        delete window.__lazyLoadCleanup;
+      } catch (error) {
+        logger.error('Error during lazy load cleanup', error);
+      }
+    }
+
+    /* Call contact form cleanup if available */
+    if (typeof window.__contactFormCleanup === 'function') {
+      try {
+        window.__contactFormCleanup();
+        delete window.__contactFormCleanup;
+      } catch (error) {
+        logger.error('Error during contact form cleanup', error);
+      }
+    }
+  });
+}
+
+/**
+ * Export for testing purposes
+ * @private
+ */
+export const __testing__ = {
+  initializeApp,
+  logger,
+};
