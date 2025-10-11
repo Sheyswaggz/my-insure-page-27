@@ -1,0 +1,447 @@
+/* src/styles/components/buttons.css */
+
+/**
+ * Button Component Styles
+ * 
+ * Reusable button components with primary and secondary variants.
+ * Implements accessible touch targets, focus states, and smooth transitions.
+ * 
+ * Features:
+ * - Minimum 44x44px touch target for accessibility
+ * - Clear hover, focus, and active states
+ * - Disabled state styling
+ * - Smooth transitions for interactive feedback
+ * - WCAG AA compliant contrast ratios
+ * 
+ * Usage:
+ * <button class="btn btn-primary">Primary Action</button>
+ * <button class="btn btn-secondary">Secondary Action</button>
+ */
+
+/* ============================================================================
+   Base Button Styles
+   ========================================================================= */
+
+/**
+ * Base button component
+ * Provides foundation styles for all button variants
+ */
+.btn {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  
+  /* Sizing - Minimum 44x44px touch target */
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-lg);
+  
+  /* Typography */
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  
+  /* Visual styling */
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+  
+  /* Transitions */
+  transition: 
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base),
+    transform var(--transition-fast),
+    box-shadow var(--transition-base);
+  
+  /* Prevent text selection on buttons */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  
+  /* Ensure proper stacking context */
+  position: relative;
+  isolation: isolate;
+}
+
+/**
+ * Focus state for keyboard navigation
+ * Provides clear visual indicator for accessibility
+ */
+.btn:focus {
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.2);
+}
+
+/**
+ * Active state for tactile feedback
+ */
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/**
+ * Disabled state
+ * Reduces opacity and removes interactivity
+ */
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   Primary Button Variant
+   ========================================================================= */
+
+/**
+ * Primary button - Main call-to-action
+ * High contrast with prominent styling
+ */
+.btn-primary {
+  background-color: var(--color-primary-600);
+  color: white;
+  border-color: var(--color-primary-600);
+  box-shadow: var(--shadow-sm);
+}
+
+/**
+ * Primary button hover state
+ * Darkens background for clear interaction feedback
+ */
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-700);
+  border-color: var(--color-primary-700);
+  box-shadow: var(--shadow-md);
+}
+
+/**
+ * Primary button active state
+ * Further darkens for pressed appearance
+ */
+.btn-primary:active:not(:disabled) {
+  background-color: var(--color-primary-800);
+  border-color: var(--color-primary-800);
+  box-shadow: var(--shadow-sm);
+}
+
+/**
+ * Primary button focus state
+ * Maintains visibility with outline
+ */
+.btn-primary:focus-visible {
+  outline-color: var(--color-primary-500);
+  box-shadow: 
+    0 0 0 4px rgba(66, 153, 225, 0.3),
+    var(--shadow-md);
+}
+
+/* ============================================================================
+   Secondary Button Variant
+   ========================================================================= */
+
+/**
+ * Secondary button - Alternative actions
+ * Outlined style with transparent background
+ */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
+}
+
+/**
+ * Secondary button hover state
+ * Fills background with subtle color
+ */
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-700);
+  border-color: var(--color-primary-700);
+}
+
+/**
+ * Secondary button active state
+ * Increases background opacity for pressed effect
+ */
+.btn-secondary:active:not(:disabled) {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
+  border-color: var(--color-primary-800);
+}
+
+/**
+ * Secondary button focus state
+ * Clear outline for keyboard navigation
+ */
+.btn-secondary:focus-visible {
+  outline-color: var(--color-primary-500);
+  box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.2);
+}
+
+/* ============================================================================
+   Button Size Variants
+   ========================================================================= */
+
+/**
+ * Small button variant
+ * Compact size for secondary actions
+ */
+.btn-sm {
+  min-height: 36px;
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+/**
+ * Large button variant
+ * Prominent size for primary CTAs
+ */
+.btn-lg {
+  min-height: 52px;
+  padding: var(--space-md) var(--space-xl);
+  font-size: var(--font-size-lg);
+}
+
+/* ============================================================================
+   Button Width Variants
+   ========================================================================= */
+
+/**
+ * Full-width button
+ * Spans entire container width
+ */
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+/* ============================================================================
+   Button Icon Support
+   ========================================================================= */
+
+/**
+ * Icon within button
+ * Ensures proper sizing and alignment
+ */
+.btn svg,
+.btn img {
+  width: 1.25em;
+  height: 1.25em;
+  flex-shrink: 0;
+}
+
+/**
+ * Icon-only button
+ * Square aspect ratio for icon buttons
+ */
+.btn-icon {
+  padding: var(--space-sm);
+  aspect-ratio: 1;
+}
+
+/* ============================================================================
+   Loading State
+   ========================================================================= */
+
+/**
+ * Loading button state
+ * Shows spinner and disables interaction
+ */
+.btn-loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  top: 50%;
+  left: 50%;
+  margin-left: -0.5em;
+  margin-top: -0.5em;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-right-color: transparent;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================================
+   Dark Mode Support
+   ========================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .btn-primary {
+    background-color: var(--color-primary-500);
+    border-color: var(--color-primary-500);
+  }
+  
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-primary-400);
+    border-color: var(--color-primary-400);
+  }
+  
+  .btn-primary:active:not(:disabled) {
+    background-color: var(--color-primary-300);
+    border-color: var(--color-primary-300);
+  }
+  
+  .btn-secondary {
+    color: var(--color-primary-400);
+    border-color: var(--color-primary-400);
+  }
+  
+  .btn-secondary:hover:not(:disabled) {
+    background-color: rgba(66, 153, 225, 0.1);
+    color: var(--color-primary-300);
+    border-color: var(--color-primary-300);
+  }
+  
+  .btn-secondary:active:not(:disabled) {
+    background-color: rgba(66, 153, 225, 0.2);
+    color: var(--color-primary-200);
+    border-color: var(--color-primary-200);
+  }
+}
+
+/* ============================================================================
+   High Contrast Mode Support
+   ========================================================================= */
+
+@media (prefers-contrast: high) {
+  .btn {
+    border-width: 3px;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary-700);
+    border-color: var(--color-primary-900);
+  }
+  
+  .btn-secondary {
+    border-color: var(--color-primary-700);
+    color: var(--color-primary-700);
+  }
+  
+  .btn:focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+}
+
+/* ============================================================================
+   Reduced Motion Support
+   ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+  
+  .btn:active:not(:disabled) {
+    transform: none;
+  }
+  
+  .btn-loading::after {
+    animation: none;
+    border-right-color: currentColor;
+    opacity: 0.5;
+  }
+}
+
+/* ============================================================================
+   Print Styles
+   ========================================================================= */
+
+@media print {
+  .btn {
+    border: 2px solid currentColor;
+    box-shadow: none;
+  }
+  
+  .btn-primary {
+    background-color: transparent;
+    color: black;
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: black;
+  }
+}
+
+/* ============================================================================
+   Responsive Adjustments
+   ========================================================================= */
+
+/**
+ * Mobile: Increase touch target size
+ */
+@media (max-width: 639px) {
+  .btn {
+    min-height: 48px;
+    padding: var(--space-md) var(--space-lg);
+  }
+  
+  .btn-sm {
+    min-height: 40px;
+  }
+  
+  .btn-lg {
+    min-height: 56px;
+  }
+}
+
+/**
+ * Tablet and up: Standard sizing
+ */
+@media (min-width: 768px) {
+  .btn {
+    min-height: 44px;
+  }
+}
+
+/**
+ * Desktop: Hover effects only on devices with hover capability
+ */
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  .btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+/**
+ * Touch devices: Remove hover transform
+ */
+@media (hover: none) {
+  .btn:hover:not(:disabled) {
+    transform: none;
+  }
+}

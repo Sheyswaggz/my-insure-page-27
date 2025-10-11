@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="auto-insurance-icon-title" role="img">
+  <title id="auto-insurance-icon-title">Auto Insurance</title>
+  <path d="M8 28h48v20a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V28z"/>
+  <path d="M12 28V20a4 4 0 0 1 4-4h32a4 4 0 0 1 4 4v8"/>
+  <path d="M8 28h6l4-8h28l4 8h6"/>
+  <circle cx="18" cy="44" r="4"/>
+  <circle cx="46" cy="44" r="4"/>
+  <path d="M22 44h20"/>
+  <path d="M16 20h8"/>
+  <path d="M40 20h8"/>
+  <path d="M28 32h8"/>
+  <path d="M32 28v8"/>
+</svg>

@@ -1,0 +1,314 @@
+// scripts/optimize-about-image.js
+/**
+ * Production-grade image optimization script for about section image
+ * Converts JPEG to WebP format with quality 85, targeting <70KB file size
+ * 
+ * Usage: node scripts/optimize-about-image.js
+ * 
+ * Requirements:
+ * - sharp package must be installed: npm install --save-dev sharp
+ * - Source image must exist at src/assets/images/about-image.jpg
+ * 
+ * @module optimize-about-image
+ */
+
+import sharp from 'sharp';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/* Configuration constants */
+const CONFIG = {
+  SOURCE_PATH: path.resolve(__dirname, '../src/assets/images/about-image.jpg'),
+  OUTPUT_PATH: path.resolve(__dirname, '../src/assets/images/about-image.webp'),
+  TARGET_WIDTH: 800,
+  TARGET_HEIGHT: 600,
+  WEBP_QUALITY: 85,
+  WEBP_EFFORT: 6,
+  MAX_FILE_SIZE_KB: 70,
+  MAX_FILE_SIZE_BYTES: 70 * 1024,
+};
+
+/* Logging utilities */
+const logger = {
+  info: (message, data = {}) => {
+    console.log(`[INFO] ${message}`, Object.keys(data).length ? data : '');
+  },
+  warn: (message, data = {}) => {
+    console.warn(`[WARN] ${message}`, Object.keys(data).length ? data : '');
+  },
+  error: (message, error) => {
+    console.error(`[ERROR] ${message}`, error);
+  },
+  success: (message, data = {}) => {
+    console.log(`[SUCCESS] ✓ ${message}`, Object.keys(data).length ? data : '');
+  },
+};
+
+/**
+ * Validates that the source image exists and is readable
+ * @throws {Error} If source image is not accessible
+ */
+async function validateSourceImage() {
+  try {
+    await fs.access(CONFIG.SOURCE_PATH, fs.constants.R_OK);
+    const stats = await fs.stat(CONFIG.SOURCE_PATH);
+    
+    if (!stats.isFile()) {
+      throw new Error('Source path is not a file');
+    }
+    
+    logger.info('Source image validated', {
+      path: CONFIG.SOURCE_PATH,
+      sizeKB: (stats.size / 1024).toFixed(2),
+    });
+    
+    return stats;
+  } catch (error) {
+    logger.error('Source image validation failed', error);
+    throw new Error(`Cannot access source image at ${CONFIG.SOURCE_PATH}: ${error.message}`);
+  }
+}
+
+/**
+ * Ensures output directory exists
+ * @throws {Error} If directory cannot be created
+ */
+async function ensureOutputDirectory() {
+  try {
+    const outputDir = path.dirname(CONFIG.OUTPUT_PATH);
+    await fs.mkdir(outputDir, { recursive: true });
+    logger.info('Output directory ready', { path: outputDir });
+  } catch (error) {
+    logger.error('Failed to create output directory', error);
+    throw new Error(`Cannot create output directory: ${error.message}`);
+  }
+}
+
+/**
+ * Optimizes image to WebP format with specified quality
+ * @param {number} quality - WebP quality setting (0-100)
+ * @returns {Promise<Buffer>} Optimized image buffer
+ */
+async function optimizeToWebP(quality) {
+  try {
+    logger.info('Starting WebP conversion', {
+      quality,
+      targetSize: `${CONFIG.TARGET_WIDTH}x${CONFIG.TARGET_HEIGHT}`,
+    });
+    
+    const buffer = await sharp(CONFIG.SOURCE_PATH)
+      .resize(CONFIG.TARGET_WIDTH, CONFIG.TARGET_HEIGHT, {
+        fit: 'cover',
+        position: 'center',
+        withoutEnlargement: false,
+      })
+      .webp({
+        quality,
+        effort: CONFIG.WEBP_EFFORT,
+        smartSubsample: true,
+        nearLossless: false,
+      })
+      .toBuffer();
+    
+    logger.info('WebP conversion completed', {
+      bufferSizeKB: (buffer.length / 1024).toFixed(2),
+    });
+    
+    return buffer;
+  } catch (error) {
+    logger.error('WebP conversion failed', error);
+    throw new Error(`Image optimization failed: ${error.message}`);
+  }
+}
+
+/**
+ * Attempts to optimize image within target file size
+ * Uses binary search approach to find optimal quality setting
+ * @returns {Promise<Buffer>} Optimized image buffer within size constraints
+ */
+async function optimizeWithinSizeConstraint() {
+  let minQuality = 60;
+  let maxQuality = CONFIG.WEBP_QUALITY;
+  let bestBuffer = null;
+  let bestQuality = maxQuality;
+  
+  logger.info('Starting size-constrained optimization', {
+    targetSizeKB: CONFIG.MAX_FILE_SIZE_KB,
+    qualityRange: `${minQuality}-${maxQuality}`,
+  });
+  
+  /* Try initial quality */
+  let buffer = await optimizeToWebP(maxQuality);
+  
+  if (buffer.length <= CONFIG.MAX_FILE_SIZE_BYTES) {
+    logger.success('Initial quality meets size constraint', {
+      quality: maxQuality,
+      sizeKB: (buffer.length / 1024).toFixed(2),
+    });
+    return buffer;
+  }
+  
+  /* Binary search for optimal quality */
+  let attempts = 0;
+  const maxAttempts = 10;
+  
+  while (minQuality <= maxQuality && attempts < maxAttempts) {
+    attempts++;
+    const currentQuality = Math.floor((minQuality + maxQuality) / 2);
+    
+    logger.info(`Optimization attempt ${attempts}/${maxAttempts}`, {
+      quality: currentQuality,
+    });
+    
+    buffer = await optimizeToWebP(currentQuality);
+    const bufferSize = buffer.length;
+    
+    if (bufferSize <= CONFIG.MAX_FILE_SIZE_BYTES) {
+      bestBuffer = buffer;
+      bestQuality = currentQuality;
+      minQuality = currentQuality + 1;
+      
+      logger.info('Found acceptable quality', {
+        quality: currentQuality,
+        sizeKB: (bufferSize / 1024).toFixed(2),
+      });
+    } else {
+      maxQuality = currentQuality - 1;
+      
+      logger.info('Quality too high, reducing', {
+        quality: currentQuality,
+        sizeKB: (bufferSize / 1024).toFixed(2),
+      });
+    }
+  }
+  
+  if (!bestBuffer) {
+    logger.warn('Could not meet size constraint, using minimum quality', {
+      quality: 60,
+    });
+    bestBuffer = await optimizeToWebP(60);
+  }
+  
+  logger.success('Optimization completed', {
+    finalQuality: bestQuality,
+    attempts,
+    finalSizeKB: (bestBuffer.length / 1024).toFixed(2),
+  });
+  
+  return bestBuffer;
+}
+
+/**
+ * Writes optimized buffer to output file
+ * @param {Buffer} buffer - Image buffer to write
+ */
+async function writeOutputFile(buffer) {
+  try {
+    await fs.writeFile(CONFIG.OUTPUT_PATH, buffer);
+    
+    const stats = await fs.stat(CONFIG.OUTPUT_PATH);
+    const sizeKB = stats.size / 1024;
+    
+    logger.success('WebP file created', {
+      path: CONFIG.OUTPUT_PATH,
+      sizeKB: sizeKB.toFixed(2),
+    });
+    
+    if (stats.size > CONFIG.MAX_FILE_SIZE_BYTES) {
+      logger.warn('Output file exceeds target size', {
+        targetKB: CONFIG.MAX_FILE_SIZE_KB,
+        actualKB: sizeKB.toFixed(2),
+        excessKB: (sizeKB - CONFIG.MAX_FILE_SIZE_KB).toFixed(2),
+      });
+    }
+    
+    return stats;
+  } catch (error) {
+    logger.error('Failed to write output file', error);
+    throw new Error(`Cannot write output file: ${error.message}`);
+  }
+}
+
+/**
+ * Validates the generated WebP image
+ * @param {Buffer} buffer - Image buffer to validate
+ */
+async function validateOutput(buffer) {
+  try {
+    const metadata = await sharp(buffer).metadata();
+    
+    logger.info('Output validation', {
+      format: metadata.format,
+      width: metadata.width,
+      height: metadata.height,
+      hasAlpha: metadata.hasAlpha,
+      space: metadata.space,
+    });
+    
+    if (metadata.format !== 'webp') {
+      throw new Error(`Invalid output format: ${metadata.format}`);
+    }
+    
+    if (metadata.width !== CONFIG.TARGET_WIDTH || metadata.height !== CONFIG.TARGET_HEIGHT) {
+      logger.warn('Output dimensions differ from target', {
+        expected: `${CONFIG.TARGET_WIDTH}x${CONFIG.TARGET_HEIGHT}`,
+        actual: `${metadata.width}x${metadata.height}`,
+      });
+    }
+    
+    logger.success('Output validation passed');
+  } catch (error) {
+    logger.error('Output validation failed', error);
+    throw new Error(`Output validation failed: ${error.message}`);
+  }
+}
+
+/**
+ * Main execution function
+ * Orchestrates the complete image optimization workflow
+ */
+async function main() {
+  const startTime = Date.now();
+  
+  try {
+    logger.info('Starting about image optimization workflow');
+    
+    /* Step 1: Validate source image */
+    await validateSourceImage();
+    
+    /* Step 2: Ensure output directory exists */
+    await ensureOutputDirectory();
+    
+    /* Step 3: Optimize image within size constraint */
+    const optimizedBuffer = await optimizeWithinSizeConstraint();
+    
+    /* Step 4: Validate optimized output */
+    await validateOutput(optimizedBuffer);
+    
+    /* Step 5: Write to file */
+    await writeOutputFile(optimizedBuffer);
+    
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    
+    logger.success('Image optimization workflow completed', {
+      durationSeconds: duration,
+      outputPath: CONFIG.OUTPUT_PATH,
+    });
+    
+    process.exit(0);
+  } catch (error) {
+    logger.error('Image optimization workflow failed', error);
+    process.exit(1);
+  }
+}
+
+/* Execute if run directly */
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main();
+}
+
+export { optimizeToWebP, validateSourceImage, validateOutput };

@@ -1,0 +1,653 @@
+/* src/styles/components/hero.css */
+
+/**
+ * Hero Section Styles
+ * 
+ * Full-viewport hero section with background image, overlay, and centered content.
+ * Implements responsive typography, parallax effect on desktop, and accessibility features.
+ * 
+ * Features:
+ * - Full viewport height with dynamic viewport units
+ * - Background image with overlay for text readability
+ * - Flexbox centering for content alignment
+ * - Responsive typography scaling
+ * - Parallax effect on desktop (fixed background attachment)
+ * - Smooth transitions and animations
+ * - Accessibility-first focus states
+ * - Performance optimizations (will-change, contain)
+ * 
+ * Performance Considerations:
+ * - Uses CSS containment for layout optimization
+ * - Implements will-change for smooth animations
+ * - Optimized background-size for faster rendering
+ * - Reduced motion support for accessibility
+ */
+
+/* ============================================================================
+   Hero Section Container
+   ========================================================================= */
+
+.hero {
+  /* Layout */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  /* Dimensions - Use dynamic viewport height for mobile-safe full height */
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  width: 100%;
+  
+  /* Spacing */
+  padding-block: var(--space-3xl);
+  padding-inline: var(--space-md);
+  
+  /* Background */
+  background-color: var(--color-gray-900);
+  background-image: 
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.7)
+    ),
+    url('/images/hero-background.webp');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  
+  /* Performance optimization */
+  contain: layout style paint;
+  isolation: isolate;
+  
+  /* Text color for content */
+  color: var(--color-primary-50);
+  
+  /* Ensure content is above background */
+  z-index: 1;
+}
+
+/* Parallax effect for desktop - fixed background attachment */
+@media (min-width: 1024px) {
+  .hero {
+    background-attachment: fixed;
+  }
+}
+
+/* Disable parallax for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    background-attachment: scroll;
+  }
+}
+
+/* Alternative background for browsers without WebP support */
+@supports not (background-image: url('image.webp')) {
+  .hero {
+    background-image: 
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5),
+        rgba(0, 0, 0, 0.7)
+      ),
+      url('/images/hero-background.jpg');
+  }
+}
+
+/* ============================================================================
+   Hero Content Container
+   ========================================================================= */
+
+.hero__content {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  
+  /* Dimensions */
+  max-width: min(90%, 1200px);
+  width: 100%;
+  
+  /* Spacing */
+  padding-block: var(--space-2xl);
+  padding-inline: var(--space-md);
+  
+  /* Text alignment */
+  text-align: center;
+  
+  /* Ensure content is above overlay */
+  position: relative;
+  z-index: 2;
+  
+  /* Animation */
+  animation: hero-fade-in 0.8s ease-out;
+  animation-fill-mode: both;
+}
+
+/* Fade-in animation for hero content */
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Disable animation for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .hero__content {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   Hero Headline
+   ========================================================================= */
+
+.hero__headline {
+  /* Typography */
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-4xl);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  
+  /* Color */
+  color: var(--color-primary-50);
+  
+  /* Spacing */
+  margin-block-start: 0;
+  margin-block-end: var(--space-md);
+  
+  /* Text rendering */
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Performance hint */
+  will-change: transform;
+}
+
+/* Responsive typography scaling */
+@media (min-width: 640px) {
+  .hero__headline {
+    font-size: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .hero__headline {
+    font-size: clamp(3rem, 2.5rem + 3vw, 4rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero__headline {
+    font-size: clamp(3.5rem, 3rem + 3.5vw, 4.5rem);
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero__headline {
+    font-size: clamp(4rem, 3.5rem + 4vw, 5rem);
+  }
+}
+
+/* ============================================================================
+   Hero Subheadline
+   ========================================================================= */
+
+.hero__subheadline {
+  /* Typography */
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-lg);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  
+  /* Color */
+  color: var(--color-primary-100);
+  
+  /* Spacing */
+  margin-block-start: 0;
+  margin-block-end: var(--space-xl);
+  
+  /* Dimensions */
+  max-width: 65ch;
+  
+  /* Text rendering */
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Responsive typography scaling */
+@media (min-width: 640px) {
+  .hero__subheadline {
+    font-size: clamp(1.125rem, 1rem + 0.75vw, 1.375rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .hero__subheadline {
+    font-size: clamp(1.25rem, 1.1rem + 0.875vw, 1.5rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero__subheadline {
+    font-size: clamp(1.375rem, 1.2rem + 1vw, 1.625rem);
+  }
+}
+
+/* ============================================================================
+   Hero Call-to-Action Button
+   ========================================================================= */
+
+.hero__cta {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  
+  /* Dimensions */
+  min-width: 200px;
+  padding-block: var(--space-md);
+  padding-inline: var(--space-xl);
+  
+  /* Typography */
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  
+  /* Colors */
+  color: var(--color-primary-50);
+  background-color: var(--color-primary-600);
+  
+  /* Border */
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  
+  /* Effects */
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  
+  /* Transitions */
+  transition: 
+    background-color var(--transition-base),
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
+  
+  /* Cursor */
+  cursor: pointer;
+  
+  /* Performance hint */
+  will-change: transform;
+  
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+/* Hover state */
+.hero__cta:hover {
+  background-color: var(--color-primary-700);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* Active state */
+.hero__cta:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* Focus state for keyboard navigation */
+.hero__cta:focus-visible {
+  outline: 3px solid var(--color-primary-300);
+  outline-offset: 3px;
+  border-color: var(--color-primary-300);
+}
+
+/* Disabled state */
+.hero__cta:disabled,
+.hero__cta[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Responsive sizing */
+@media (min-width: 640px) {
+  .hero__cta {
+    min-width: 220px;
+    padding-block: clamp(0.875rem, 0.75rem + 0.625vw, 1rem);
+    padding-inline: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+    font-size: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .hero__cta {
+    min-width: 240px;
+  }
+}
+
+/* ============================================================================
+   Hero Scroll Indicator
+   ========================================================================= */
+
+.hero__scroll-indicator {
+  /* Layout */
+  position: absolute;
+  bottom: var(--space-xl);
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Dimensions */
+  width: 30px;
+  height: 50px;
+  
+  /* Border */
+  border: 2px solid var(--color-primary-200);
+  border-radius: var(--radius-full);
+  
+  /* Ensure visibility */
+  z-index: 3;
+  
+  /* Animation */
+  animation: scroll-bounce 2s ease-in-out infinite;
+}
+
+/* Scroll indicator dot */
+.hero__scroll-indicator::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-primary-200);
+  border-radius: 50%;
+  animation: scroll-dot 2s ease-in-out infinite;
+}
+
+/* Bounce animation for scroll indicator */
+@keyframes scroll-bounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+/* Dot animation */
+@keyframes scroll-dot {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateX(-50%) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Hide scroll indicator on small screens */
+@media (max-height: 600px) {
+  .hero__scroll-indicator {
+    display: none;
+  }
+}
+
+/* Disable animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll-indicator {
+    animation: none;
+  }
+  
+  .hero__scroll-indicator::before {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   Hero Video Background (Feature Flag Support)
+   ========================================================================= */
+
+.hero[data-video-enabled="true"] {
+  background-image: none;
+}
+
+.hero__video {
+  /* Layout */
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  /* Dimensions */
+  width: 100%;
+  height: 100%;
+  
+  /* Object fit */
+  object-fit: cover;
+  object-position: center;
+  
+  /* Ensure video is behind content */
+  z-index: 0;
+  
+  /* Performance optimization */
+  will-change: transform;
+}
+
+/* Video overlay for better text readability */
+.hero__video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.4),
+    rgba(0, 0, 0, 0.6)
+  );
+  z-index: 1;
+}
+
+/* ============================================================================
+   High Contrast Mode Support
+   ========================================================================= */
+
+@media (prefers-contrast: high) {
+  .hero {
+    background-image: 
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.9)
+      ),
+      url('/images/hero-background.webp');
+  }
+  
+  .hero__headline,
+  .hero__subheadline {
+    color: hsl(0, 0%, 100%);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  
+  .hero__cta {
+    border-color: var(--color-primary-300);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.5),
+      0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ============================================================================
+   Print Styles
+   ========================================================================= */
+
+@media print {
+  .hero {
+    min-height: auto;
+    background-image: none;
+    background-color: transparent;
+    color: black;
+    page-break-inside: avoid;
+  }
+  
+  .hero__headline,
+  .hero__subheadline {
+    color: black;
+  }
+  
+  .hero__cta,
+  .hero__scroll-indicator,
+  .hero__video,
+  .hero__video-overlay {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   Dark Mode Adjustments
+   ========================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .hero {
+    background-image: 
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.6),
+        rgba(0, 0, 0, 0.8)
+      ),
+      url('/images/hero-background.webp');
+  }
+}
+
+/* ============================================================================
+   Responsive Breakpoint Adjustments
+   ========================================================================= */
+
+/* Small tablets and up */
+@media (min-width: 640px) {
+  .hero {
+    padding-inline: var(--space-lg);
+  }
+  
+  .hero__content {
+    gap: var(--space-xl);
+    padding-inline: var(--space-lg);
+  }
+}
+
+/* Tablets and up */
+@media (min-width: 768px) {
+  .hero {
+    padding-block: var(--space-3xl);
+  }
+  
+  .hero__content {
+    gap: var(--space-2xl);
+    padding-block: var(--space-3xl);
+  }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+  .hero {
+    padding-inline: var(--space-xl);
+  }
+  
+  .hero__content {
+    max-width: min(85%, 1400px);
+  }
+}
+
+/* Large desktop and up */
+@media (min-width: 1280px) {
+  .hero__content {
+    max-width: min(80%, 1600px);
+  }
+}
+
+/* ============================================================================
+   Accessibility Enhancements
+   ========================================================================= */
+
+/* Ensure sufficient color contrast for text */
+.hero__headline,
+.hero__subheadline {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Skip link for keyboard navigation */
+.hero__skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary-600);
+  color: var(--color-primary-50);
+  padding: var(--space-sm) var(--space-md);
+  text-decoration: none;
+  z-index: 100;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+
+.hero__skip-link:focus {
+  top: var(--space-sm);
+  left: var(--space-sm);
+}
+
+/* ============================================================================
+   Performance Optimizations
+   ========================================================================= */
+
+/* Use CSS containment for better rendering performance */
+.hero__content {
+  contain: layout style;
+}
+
+/* Optimize animations with transform and opacity only */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__cta {
+    transition-property: background-color, transform, box-shadow, border-color;
+  }
+}
+
+/* Reduce complexity for low-end devices */
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .hero {
+    background-attachment: scroll;
+    background-size: cover;
+  }
+  
+  .hero__content {
+    animation: none;
+  }
+}
