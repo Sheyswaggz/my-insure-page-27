@@ -1,128 +1,131 @@
 /**
  * Main JavaScript Entry Point
- *
- * Initializes all components and utilities for the landing page.
- * Handles DOMContentLoaded event and component initialization with error handling.
- *
+ * 
+ * Initializes all interactive components and utilities for the insurance landing page.
+ * Handles header navigation, lazy loading, and performance monitoring.
+ * 
  * @module main
- * @generated-from task-id:e59bcfd2-c7fd-4e21-a4e7-991d3345a5a2 sprint:current
- * @modifies main application initialization
+ * @version 1.0.0
+ * 
+ * @generated-from: task-id:TASK-003
+ * @modifies: DOM initialization and component setup
+ * @dependencies: ["header", "lazyload"]
  */
 
 import { initHeader } from './components/header.js';
+import { initLazyLoad } from './utils/lazyload.js';
 
 /**
- * Logger utility for structured logging with context
- * @private
+ * Logger utility for structured logging
+ * @type {Object}
  */
 const logger = {
-  /**
-   * Log informational message
-   * @param {string} message - Log message
-   * @param {Object} _context - Additional context data (unused, for future use)
-   */
-  info: (message, _context = {}) => {
-    /*
-     * Info logging disabled in production to reduce console noise.
-     * Enable by uncommenting the line below during development.
-     */
-    // console.info('[Main]', message, { timestamp: new Date().toISOString(), ...context });
+  info: (message, context = {}) => {
+    if (typeof console !== 'undefined' && console.info) {
+      console.info(`[Main] ${message}`, context);
+    }
   },
-
-  /**
-   * Log warning message
-   * @param {string} message - Warning message
-   * @param {Object} context - Additional context data
-   */
   warn: (message, context = {}) => {
-    console.warn('[Main]', message, {
-      timestamp: new Date().toISOString(),
-      ...context,
-    });
+    if (typeof console !== 'undefined' && console.warn) {
+      console.warn(`[Main] ${message}`, context);
+    }
   },
-
-  /**
-   * Log error message
-   * @param {string} message - Error message
-   * @param {Error|Object} error - Error object or context
-   */
-  error: (message, error = {}) => {
-    console.error('[Main]', message, {
-      timestamp: new Date().toISOString(),
-      error: error instanceof Error ? {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
-      } : error,
-    });
+  error: (message, error = null, context = {}) => {
+    if (typeof console !== 'undefined' && console.error) {
+      console.error(`[Main] ${message}`, { error, ...context });
+    }
   },
 };
 
 /**
- * Initializes the header component with error handling
- * @private
- * @returns {Function|null} Cleanup function or null if initialization failed
+ * Initialize all application components
+ * Sets up header navigation, lazy loading, and performance monitoring
+ * 
+ * @returns {void}
  */
-function initializeHeader() {
+function initializeApp() {
   try {
-    logger.info('Initializing header component');
-    const cleanup = initHeader();
-    logger.info('Header component initialized successfully');
-    return cleanup;
-  } catch (error) {
-    logger.error('Failed to initialize header component', error);
-
-    if (typeof window !== 'undefined' && window.dataLayer) {
-      window.dataLayer.push({
-        event: 'component_init_error',
-        component: 'header',
-        error: error.message,
-      });
+    /* Performance mark for initialization start */
+    if (typeof performance !== 'undefined' && performance.mark) {
+      performance.mark('app-init-start');
     }
 
-    return null;
-  }
-}
+    logger.info('Initializing application');
 
-/**
- * Main initialization function
- * Initializes all components when DOM is ready
- * @private
- */
-function init() {
-  logger.info('Application initialization started');
+    /* Initialize header component */
+    try {
+      initHeader();
+      logger.info('Header initialized successfully');
+    } catch (headerError) {
+      logger.error('Failed to initialize header', headerError);
+      /* Continue initialization even if header fails */
+    }
 
-  const cleanupFunctions = [];
-
-  const headerCleanup = initializeHeader();
-  if (headerCleanup) {
-    cleanupFunctions.push(headerCleanup);
-  }
-
-  logger.info('Application initialization completed', {
-    componentsInitialized: cleanupFunctions.length,
-  });
-
-  if (typeof window !== 'undefined') {
-    window.__appCleanup = () => {
-      logger.info('Running application cleanup');
-      cleanupFunctions.forEach((cleanup) => {
-        try {
-          cleanup();
-        } catch (error) {
-          logger.error('Error during component cleanup', error);
-        }
+    /* Initialize lazy loading utility */
+    try {
+      const lazyLoadCleanup = initLazyLoad({
+        selector: '[data-src], [data-srcset]',
+        rootMargin: '50px',
+        threshold: 0.01,
+        enableNativeLazy: true,
+        retryAttempts: 3,
+        retryDelay: 1000,
       });
-      logger.info('Application cleanup completed');
-    };
+
+      logger.info('Lazy loading initialized successfully');
+
+      /* Store cleanup function for potential future use */
+      if (typeof window !== 'undefined') {
+        window.__lazyLoadCleanup = lazyLoadCleanup;
+      }
+    } catch (lazyLoadError) {
+      logger.error('Failed to initialize lazy loading', lazyLoadError);
+      /* Continue initialization even if lazy loading fails */
+    }
+
+    /* Performance mark for initialization end */
+    if (typeof performance !== 'undefined' && performance.mark) {
+      performance.mark('app-init-end');
+      
+      try {
+        performance.measure('app-initialization', 'app-init-start', 'app-init-end');
+        
+        /* Log initialization time */
+        const measure = performance.getEntriesByName('app-initialization')[0];
+        if (measure) {
+          logger.info('Application initialization completed', {
+            duration: `${measure.duration.toFixed(2)}ms`,
+          });
+        }
+      } catch (measureError) {
+        /* Ignore measure errors */
+        logger.info('Application initialization completed');
+      }
+    } else {
+      logger.info('Application initialization completed');
+    }
+
+  } catch (error) {
+    logger.error('Critical error during application initialization', error);
+    /* Rethrow to prevent silent failures */
+    throw error;
   }
 }
 
 /**
- * Initialize application when DOM is ready
+ * DOMContentLoaded event handler
+ * Ensures DOM is fully loaded before initializing components
  */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp, { once: true });
+  } else {
+    /* DOM already loaded, initialize immediately */
+    initializeApp();
+  }
 }
+
+/**
+ * Export initialization function for testing purposes
+ */
+export { initializeApp };
