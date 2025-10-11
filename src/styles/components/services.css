@@ -1,0 +1,484 @@
+/* src/styles/components/services.css */
+
+/**
+ * Services Section Styles
+ * 
+ * Implements responsive grid layout for insurance service cards with hover effects,
+ * icon styling, and adaptive breakpoints. Uses CSS Grid for flexible card arrangement
+ * and CSS custom properties for consistent theming.
+ * 
+ * Layout Strategy:
+ * - Mobile (320px+): Single column stack
+ * - Tablet (768px+): Two column grid
+ * - Desktop (1024px+): Four column grid
+ * 
+ * Performance Considerations:
+ * - GPU-accelerated transforms for hover effects
+ * - Reduced motion support for accessibility
+ * - Efficient CSS containment for card rendering
+ */
+
+/* ============================================================================
+   Services Section Container
+   ========================================================================= */
+
+.services {
+  position: relative;
+  background-color: var(--section-bg-gray);
+  overflow: hidden;
+}
+
+.services__container {
+  max-width: var(--container-xl);
+  margin-inline: auto;
+  padding-inline: var(--space-md);
+}
+
+/* ============================================================================
+   Section Header
+   ========================================================================= */
+
+.services__header {
+  text-align: center;
+  margin-block-end: var(--space-3xl);
+}
+
+.services__title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-block-end: var(--space-md);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.services__subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  max-width: 65ch;
+  margin-inline: auto;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ============================================================================
+   Services Grid Layout
+   ========================================================================= */
+
+.services__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  
+  /* CSS containment for performance */
+  contain: layout style;
+}
+
+/* Tablet: 2 columns */
+@media (min-width: 768px) {
+  .services__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xl);
+  }
+}
+
+/* Desktop: 4 columns */
+@media (min-width: 1024px) {
+  .services__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+  }
+}
+
+/* Large desktop: Increased gap */
+@media (min-width: 1280px) {
+  .services__grid {
+    gap: var(--space-xl);
+  }
+}
+
+/* ============================================================================
+   Service Card Component
+   ========================================================================= */
+
+.service-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  
+  /* Performance optimization */
+  will-change: transform, box-shadow;
+  contain: layout style paint;
+  
+  /* Ensure consistent height across grid items */
+  min-height: 280px;
+}
+
+/* Hover state with GPU-accelerated transform */
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Focus state for keyboard navigation */
+.service-card:focus-within {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Active state */
+.service-card:active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================================================
+   Card Icon Container
+   ========================================================================= */
+
+.service-card__icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  border-radius: var(--radius-lg);
+  margin-block-end: var(--space-lg);
+  flex-shrink: 0;
+  
+  /* Smooth icon color transition */
+  transition: background var(--transition-base);
+}
+
+.service-card:hover .service-card__icon-wrapper {
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+}
+
+.service-card__icon {
+  width: 32px;
+  height: 32px;
+  color: white;
+  
+  /* Ensure SVG icons scale properly */
+  display: block;
+}
+
+/* Icon as background image fallback */
+.service-card__icon-wrapper[data-icon]::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* ============================================================================
+   Card Content
+   ========================================================================= */
+
+.service-card__content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.service-card__title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-block-end: var(--space-sm);
+  line-height: 1.3;
+  
+  /* Prevent orphaned words */
+  text-wrap: balance;
+}
+
+.service-card__description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-block-end: var(--space-md);
+  flex-grow: 1;
+  
+  /* Improve readability */
+  text-wrap: pretty;
+}
+
+/* ============================================================================
+   Card Link/Button
+   ========================================================================= */
+
+.service-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary-600);
+  text-decoration: none;
+  margin-block-start: auto;
+  transition: color var(--transition-base);
+}
+
+.service-card__link:hover {
+  color: var(--color-primary-700);
+}
+
+.service-card__link:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Arrow icon for link */
+.service-card__link::after {
+  content: '→';
+  display: inline-block;
+  transition: transform var(--transition-base);
+}
+
+.service-card__link:hover::after {
+  transform: translateX(4px);
+}
+
+/* ============================================================================
+   Service Card Variants
+   ========================================================================= */
+
+/* Featured card variant */
+.service-card--featured {
+  background: linear-gradient(135deg, var(--color-primary-50), var(--color-primary-100));
+  border: 2px solid var(--color-primary-200);
+}
+
+.service-card--featured .service-card__title {
+  color: var(--color-primary-900);
+}
+
+/* Highlighted card variant */
+.service-card--highlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card--highlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-600));
+}
+
+/* ============================================================================
+   Service Categories/Tags
+   ========================================================================= */
+
+.service-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-block-start: var(--space-md);
+}
+
+.service-card__tag {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-primary-700);
+  background-color: var(--color-primary-100);
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-fast);
+}
+
+.service-card__tag:hover {
+  background-color: var(--color-primary-200);
+}
+
+/* ============================================================================
+   Loading State
+   ========================================================================= */
+
+.service-card--loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.service-card--loading .service-card__icon-wrapper,
+.service-card--loading .service-card__title,
+.service-card--loading .service-card__description {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 25%,
+    var(--color-gray-300) 50%,
+    var(--color-gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+  color: transparent;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================================================
+   Accessibility Enhancements
+   ========================================================================= */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .service-card,
+  .service-card__icon-wrapper,
+  .service-card__link,
+  .service-card__link::after,
+  .service-card__tag {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  
+  .service-card:hover {
+    transform: none;
+  }
+  
+  .service-card__link:hover::after {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .service-card {
+    border: 2px solid var(--color-border);
+  }
+  
+  .service-card:focus-within {
+    outline-width: 3px;
+  }
+  
+  .service-card__link {
+    text-decoration: underline;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .service-card {
+    background-color: var(--color-background-secondary);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+  
+  .service-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 
+                0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .service-card--featured {
+    background: linear-gradient(135deg, var(--color-primary-900), var(--color-primary-800));
+    border-color: var(--color-primary-700);
+  }
+  
+  .service-card__tag {
+    background-color: var(--color-primary-900);
+    color: var(--color-primary-200);
+  }
+}
+
+/* ============================================================================
+   Print Styles
+   ========================================================================= */
+
+@media print {
+  .services {
+    background-color: white;
+  }
+  
+  .services__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  
+  .service-card {
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+    page-break-inside: avoid;
+  }
+  
+  .service-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .service-card__link::after {
+    content: none;
+  }
+}
+
+/* ============================================================================
+   Container Query Support (Progressive Enhancement)
+   ========================================================================= */
+
+@supports (container-type: inline-size) {
+  .services__container {
+    container-type: inline-size;
+    container-name: services;
+  }
+  
+  /* Adjust grid based on container width instead of viewport */
+  @container services (width > 768px) {
+    .services__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @container services (width > 1024px) {
+    .services__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+/* ============================================================================
+   Empty State
+   ========================================================================= */
+
+.services__empty {
+  text-align: center;
+  padding: var(--space-3xl);
+  color: var(--color-text-secondary);
+}
+
+.services__empty-icon {
+  width: 64px;
+  height: 64px;
+  margin-inline: auto;
+  margin-block-end: var(--space-lg);
+  opacity: 0.5;
+}
+
+.services__empty-message {
+  font-size: var(--font-size-lg);
+  margin-block-end: var(--space-sm);
+}
+
+.services__empty-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
