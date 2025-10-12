@@ -15,6 +15,34 @@
  * - Responsive Breakpoints
  */
 
+ /* ============================================================================
+   Component Style Imports
+   ========================================================================= */
+
+/* Header Component */
+@import './components/header.css';
+
+/* Hero Section */
+@import './components/hero.css';
+
+/* Services Section */
+@import './components/services.css';
+
+/* About Section */
+@import './components/about.css';
+
+/* Benefits Section */
+@import './components/benefits.css';
+
+/* Button Components */
+@import './components/buttons.css';
+
+/* Contact Form Component */
+@import './components/contact-form.css';
+
+/* Footer Component */
+@import './components/footer.css';
+
 /* ============================================================================
    CSS Custom Properties (Design Tokens)
    ========================================================================= */
@@ -257,33 +285,7 @@ button {
   cursor: pointer;
 }
 
-/* ============================================================================
-   Component Style Imports
-   ========================================================================= */
 
-/* Header Component */
-@import './components/header.css';
-
-/* Hero Section */
-@import './components/hero.css';
-
-/* Services Section */
-@import './components/services.css';
-
-/* About Section */
-@import './components/about.css';
-
-/* Benefits Section */
-@import './components/benefits.css';
-
-/* Button Components */
-@import './components/buttons.css';
-
-/* Contact Form Component */
-@import './components/contact-form.css';
-
-/* Footer Component */
-@import './components/footer.css';
 
 /* ============================================================================
    Section Spacing Utilities

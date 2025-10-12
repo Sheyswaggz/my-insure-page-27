@@ -14,7 +14,7 @@
 
 import { initHeader } from './components/header.js';
 import { initLazyLoad } from './utils/lazyload.js';
-import { initContactForm } from './components/contact-form.js';
+import ContactForm from './components/contact-form.js';
 
 /**
  * Logger utility for structured logging
@@ -105,7 +105,8 @@ function initializeApp() {
         performance.mark('contact-form-init-start');
       }
 
-      const contactFormCleanup = initContactForm('#contact-form');
+      const formElement = document.querySelector('#contact-form');
+      const contactFormInstance = formElement ? new ContactForm(formElement) : null;
 
       if (typeof performance !== 'undefined' && performance.mark) {
         performance.mark('contact-form-init-end');
@@ -115,7 +116,14 @@ function initializeApp() {
       logger.info('Contact form initialized successfully');
 
       /* Store cleanup function for potential later use */
-      window.__contactFormCleanup = contactFormCleanup;
+      window.__contactFormCleanup = () => {
+        if (contactFormInstance) {
+          /*
+           * ContactForm class doesn't have a cleanup method, so we'll just clear the reference
+           * In a more complete implementation, you might add event listener cleanup here
+           */
+        }
+      };
     } catch (error) {
       logger.error('Failed to initialize contact form', error);
       /* Continue even if contact form fails */

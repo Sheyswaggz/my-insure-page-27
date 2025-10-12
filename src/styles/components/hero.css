@@ -52,7 +52,7 @@
       rgba(0, 0, 0, 0.5),
       rgba(0, 0, 0, 0.7)
     ),
-    url('/images/hero-background.webp');
+    url('/src/assets/images/hero-background.webp');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -91,7 +91,7 @@
         rgba(0, 0, 0, 0.5),
         rgba(0, 0, 0, 0.7)
       ),
-      url('/images/hero-background.jpg');
+      url('/src/assets/images/hero-background.jpg');
   }
 }
 
@@ -490,7 +490,7 @@
         rgba(0, 0, 0, 0.7),
         rgba(0, 0, 0, 0.9)
       ),
-      url('/images/hero-background.webp');
+      url('/src/assets/images/hero-background.webp');
   }
   
   .hero__headline,
@@ -545,7 +545,7 @@
         rgba(0, 0, 0, 0.6),
         rgba(0, 0, 0, 0.8)
       ),
-      url('/images/hero-background.webp');
+      url('/src/assets/images/hero-background.webp');
   }
 }
 
